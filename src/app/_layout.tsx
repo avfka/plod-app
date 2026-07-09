@@ -6,6 +6,7 @@ import { StatusBar } from 'expo-status-bar';
 import { useState } from 'react';
 
 import { useTheme, useThemeName } from '@/hooks/use-theme';
+import { Fonts } from '@/theme';
 
 export default function RootLayout() {
   const theme = useTheme();
@@ -26,10 +27,14 @@ export default function RootLayout() {
         screenOptions={{
           headerStyle: { backgroundColor: theme.background },
           headerTintColor: theme.text,
+          headerTitleStyle: { fontFamily: Fonts.mono, fontWeight: 'bold' },
           contentStyle: { backgroundColor: theme.background },
         }}
       >
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+        <Stack.Screen name="(onboarding)" options={{ headerShown: false }} />
+        <Stack.Screen name="event/[id]" options={{ title: 'Pass Card' }} />
       </Stack>
     </QueryClientProvider>
   );

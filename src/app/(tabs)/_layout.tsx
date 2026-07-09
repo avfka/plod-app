@@ -1,8 +1,11 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Tabs } from 'expo-router';
+import { useEffect, useRef } from 'react';
 import type { ColorValue } from 'react-native';
 
+import { useProfile } from '@/features/profile/use-profile';
 import { useTheme } from '@/hooks/use-theme';
+import { useFilters } from '@/store/filters';
 import { Fonts } from '@/theme';
 
 type IoniconName = keyof typeof Ionicons.glyphMap;
@@ -15,6 +18,17 @@ function tabIcon(name: IoniconName) {
 
 export default function TabsLayout() {
   const theme = useTheme();
+  const { data: profile } = useProfile();
+  const applyProfileDefaults = useFilters((s) => s.applyProfileDefaults);
+  const defaultsApplied = useRef(false);
+
+  // дефолт-фильтры карты = ответы опросника (спек §6), один раз за сессию
+  useEffect(() => {
+    if (profile && !defaultsApplied.current) {
+      defaultsApplied.current = true;
+      applyProfileDefaults(profile);
+    }
+  }, [profile, applyProfileDefaults]);
 
   return (
     <Tabs

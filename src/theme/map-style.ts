@@ -12,4 +12,4 @@ export const grayscaleMapStyle = [
   { featureType: 'water', stylers: [{ saturation: -100 }, { lightness: 30 }] },
   { featureType: 'poi', elementType: 'labels.icon', stylers: [{ visibility: 'off' }] },
   { featureType: 'transit', elementType: 'labels.icon', stylers: [{ saturation: -100 }] },
-] as const;
+];
