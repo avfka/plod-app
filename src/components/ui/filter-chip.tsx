@@ -1,33 +1,35 @@
-import { Pressable, Text } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
+
+import { Fonts } from '@/theme';
 
 export type FilterChipProps = {
   label: string;
   selected?: boolean;
   onPress?: () => void;
-  /** Цвет направления из dance_directions.color_hex — точка-индикатор слева. */
+  /** Цвет направления из dance_directions.color_hex — квадрат-индикатор слева. */
   dotColor?: string;
 };
 
+/** Чип-«метка» как красные теги на CCTV-кадре: прямоугольник, моно, верхний регистр. */
 export function FilterChip({ label, selected = false, onPress, dotColor }: FilterChipProps) {
   return (
     <Pressable
       accessibilityRole="button"
       accessibilityState={{ selected }}
       onPress={onPress}
-      className={`h-9 flex-row items-center gap-1.5 rounded-full border px-3.5 active:opacity-80 ${
+      className={`h-8 flex-row items-center gap-1.5 rounded-sm border px-3 active:opacity-80 ${
         selected
-          ? 'border-primary bg-primary'
-          : 'border-[#E0E1E6] bg-transparent dark:border-[#2E3135]'
+          ? 'border-accent bg-accent'
+          : 'border-ink bg-transparent dark:border-paper-dark'
       }`}
     >
       {dotColor ? (
-        <Text style={{ color: dotColor }} className="text-xs">
-          ●
-        </Text>
+        <View style={{ backgroundColor: dotColor }} className="h-2 w-2 rounded-[1px]" />
       ) : null}
       <Text
-        className={`text-sm font-medium ${
-          selected ? 'text-white' : 'text-[#17171C] dark:text-white'
+        style={{ fontFamily: Fonts.mono, letterSpacing: 1 }}
+        className={`text-xs font-bold uppercase ${
+          selected ? 'text-paper' : 'text-ink dark:text-paper-dark'
         }`}
       >
         {label}

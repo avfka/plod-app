@@ -1,12 +1,25 @@
 import { Text, View } from 'react-native';
 
-/** Временная заглушка экрана — заменяется реальным контентом в Фазах 1–4. */
+import { Fonts } from '@/theme';
+
+/** Временная заглушка экрана в стиле «досье» — заменяется контентом в Фазах 1–4. */
 export function PlaceholderScreen({ title, hint }: { title: string; hint?: string }) {
   return (
-    <View className="flex-1 items-center justify-center gap-2 bg-white px-8 dark:bg-[#121212]">
-      <Text className="text-xl font-semibold text-[#17171C] dark:text-white">{title}</Text>
+    <View className="flex-1 items-center justify-center bg-paper px-8 dark:bg-night">
+      <Text
+        style={{ fontFamily: Fonts.mono, letterSpacing: 3 }}
+        className="text-xl font-bold uppercase text-ink dark:text-paper-dark"
+      >
+        {title}
+      </Text>
+      <View className="mb-4 mt-3 h-[2px] w-16 bg-accent" />
       {hint ? (
-        <Text className="text-center text-sm text-[#60646C] dark:text-[#B0B4BA]">{hint}</Text>
+        <Text
+          style={{ fontFamily: Fonts.mono }}
+          className="text-center text-xs leading-5 text-[#6B6560] dark:text-[#A39D93]"
+        >
+          {hint}
+        </Text>
       ) : null}
     </View>
   );

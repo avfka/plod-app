@@ -6,16 +6,16 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        primary: '#6C63FF',
+        // «детективное досье»: бумага/чернила + сигнальный красный
+        accent: '#E8352A',
+        thread: '#FF1F0F',
+        ink: '#141210',
+        paper: '#FAF7F2',
         gold: '#FFD700',
-        surface: {
-          light: '#FFFFFF',
-          dark: '#121212',
-        },
-        card: {
-          light: '#F2F2F7',
-          dark: '#1E1E24',
-        },
+        // тёмная тема (CCTV night mode)
+        night: '#12100E',
+        'night-element': '#1C1916',
+        'paper-dark': '#F5F1E8',
       },
     },
   },

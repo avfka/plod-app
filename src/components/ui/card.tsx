@@ -1,10 +1,13 @@
 import { View, type ViewProps } from 'react-native';
 
-/** Базовая карточка: фон-элемент, скругление, внутренний отступ. */
+/**
+ * Карточка-«документ»: бумага, тонкая чернильная рамка, слегка
+ * скруглённые углы — как pass card из референсов.
+ */
 export function Card({ className = '', children, ...rest }: ViewProps & { className?: string }) {
   return (
     <View
-      className={`rounded-2xl bg-[#F2F2F7] p-4 dark:bg-[#1E1E24] ${className}`}
+      className={`rounded-lg border border-ink bg-paper p-4 dark:border-paper-dark dark:bg-night-element ${className}`}
       {...rest}
     >
       {children}
