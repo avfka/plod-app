@@ -28,7 +28,7 @@ export function EventCard({
     <Link href={{ pathname: '/event/[id]', params: { id: event.id } }} asChild>
       <Pressable
         style={isFavoriteChoreographer ? { borderColor: palette.gold, borderWidth: 2 } : undefined}
-        className="flex-row overflow-hidden rounded-lg border border-ink bg-paper active:opacity-90 dark:border-paper-dark dark:bg-night-element"
+        className="flex-row overflow-hidden rounded-[2px] border border-ink bg-paper active:scale-[0.99] dark:border-paper-dark dark:bg-night-element"
       >
         <View className="h-28 w-24 border-r border-ink dark:border-paper-dark">
           {event.photo_url ? (
@@ -72,12 +72,12 @@ export function EventCard({
             </Text>
           ) : null}
 
-          <View className="flex-row items-center justify-between">
+          <View className="mt-auto flex-row items-center justify-between border-t border-dashed border-[#D8D2C6] pt-1.5 dark:border-[#39342E]">
             <Text
               style={{ fontFamily: Fonts.mono }}
               className="text-xs text-[#6B6560] dark:text-[#A39D93]"
             >
-              {session ? formatDate(session.starts_at) : '—'}
+              {session ? formatDate(session.starts_at) : 'Нет даты'}
             </Text>
             <Text
               style={{ fontFamily: Fonts.mono }}

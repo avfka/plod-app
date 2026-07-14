@@ -1,5 +1,6 @@
 import { ActivityIndicator, Text, View } from 'react-native';
 
+import { ScreenMasthead } from '@/components/ui/screen-masthead';
 import { applyEventFilters, useActiveEvents } from '@/features/events/use-events';
 import { EventMap } from '@/features/map/event-map';
 import { FilterBar } from '@/features/map/filter-bar';
@@ -20,6 +21,7 @@ export default function MapScreen() {
 
   return (
     <View className="flex-1 bg-paper dark:bg-night">
+      <ScreenMasthead title="Карта" meta={`${filtered.length} событий`} />
       <FilterBar />
       {isPending ? (
         <View className="flex-1 items-center justify-center">

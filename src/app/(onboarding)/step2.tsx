@@ -1,3 +1,4 @@
+import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { Pressable, Text, View } from 'react-native';
 
@@ -7,13 +8,13 @@ import { useOnboardingDraft } from '@/features/onboarding/use-onboarding';
 import { Fonts } from '@/theme';
 
 function TypeCard({
-  emoji,
+  icon,
   title,
   hint,
   selected,
   onPress,
 }: {
-  emoji: string;
+  icon: keyof typeof Ionicons.glyphMap;
   title: string;
   hint: string;
   selected: boolean;
@@ -24,13 +25,13 @@ function TypeCard({
       accessibilityRole="button"
       accessibilityState={{ selected }}
       onPress={onPress}
-      className={`gap-1 rounded-lg border p-4 active:opacity-90 ${
+      className={`gap-2 rounded-[2px] border p-4 active:scale-[0.99] ${
         selected
           ? 'border-accent bg-accent/10'
           : 'border-ink bg-paper dark:border-paper-dark dark:bg-night-element'
       }`}
     >
-      <Text className="text-2xl">{emoji}</Text>
+      <Ionicons name={icon} size={24} color={selected ? '#E8352A' : '#6B6560'} />
       <Text
         style={{ fontFamily: Fonts.mono, letterSpacing: 1 }}
         className="text-sm font-bold uppercase text-ink dark:text-paper-dark"
@@ -54,7 +55,7 @@ export default function Step2Types() {
 
   return (
     <View className="flex-1 gap-4 bg-paper px-6 py-6 dark:bg-night">
-      <Tag label="Шаг 2 / 3" />
+      <Tag label="Формат" />
       <Text
         style={{ fontFamily: Fonts.mono, letterSpacing: 1 }}
         className="text-lg font-bold uppercase text-ink dark:text-paper-dark"
@@ -63,14 +64,14 @@ export default function Step2Types() {
       </Text>
 
       <TypeCard
-        emoji="💃"
+        icon="body-outline"
         title="Мастер-классы"
         hint="Учиться у хореографов"
         selected={draft.interestedInMc}
         onPress={() => draft.set({ interestedInMc: !draft.interestedInMc })}
       />
       <TypeCard
-        emoji="🏆"
+        icon="trophy-outline"
         title="Чемпионаты"
         hint="Соревноваться и смотреть"
         selected={draft.interestedInChamp}

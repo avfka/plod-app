@@ -7,7 +7,7 @@ import { View, type ViewProps } from 'react-native';
 export function Card({ className = '', children, ...rest }: ViewProps & { className?: string }) {
   return (
     <View
-      className={`rounded-lg border border-ink bg-paper p-4 dark:border-paper-dark dark:bg-night-element ${className}`}
+      className={`rounded-[2px] border border-ink bg-paper p-4 dark:border-paper-dark dark:bg-night-element ${className}`}
       {...rest}
     >
       {children}

@@ -55,11 +55,11 @@ export default function ProfileScreen() {
       <Card>
         <Tag label="Профайл" />
         <View className="mt-3">
-          <DossierRow label="Имя" value={profile?.full_name ?? '—'} />
-          <DossierRow label="Email" value={profile?.email ?? session?.user.email ?? '—'} />
-          <DossierRow label="Телефон" value={profile?.phone ?? '—'} />
-          <DossierRow label="Город" value={profile?.city ?? '—'} />
-          <DossierRow label="Статус" value={profile ? ROLE_LABELS[profile.role] : '—'} />
+          <DossierRow label="Имя" value={profile?.full_name ?? 'Не указано'} />
+          <DossierRow label="Email" value={profile?.email ?? session?.user.email ?? 'Не указан'} />
+          <DossierRow label="Телефон" value={profile?.phone ?? 'Не указан'} />
+          <DossierRow label="Город" value={profile?.city ?? 'Не указан'} />
+          <DossierRow label="Статус" value={profile ? ROLE_LABELS[profile.role] : 'Не указан'} />
         </View>
       </Card>
 
