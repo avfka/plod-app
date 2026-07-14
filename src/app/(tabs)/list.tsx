@@ -6,6 +6,7 @@ import { FilterBar } from '@/features/map/filter-bar';
 import { useProfile } from '@/features/profile/use-profile';
 import { useFilters } from '@/store/filters';
 import { Fonts, palette } from '@/theme';
+import { SignalHeader } from '@/components/ui/signal-header';
 
 export default function ListScreen() {
   const { data: events, isPending, error, refetch, isRefetching } = useActiveEvents();
@@ -16,6 +17,7 @@ export default function ListScreen() {
 
   return (
     <View className="flex-1 bg-paper dark:bg-night">
+      <SignalHeader eyebrow="PLOD / Archive" title="Досье" meta={`${filtered.length} найдено`} />
       <FilterBar />
       {isPending ? (
         <View className="flex-1 items-center justify-center">
@@ -31,7 +33,7 @@ export default function ListScreen() {
         <FlatList
           data={filtered}
           keyExtractor={(e) => e.id}
-          contentContainerClassName="gap-3 p-4"
+          contentContainerClassName="gap-3 p-3"
           refreshing={isRefetching}
           onRefresh={refetch}
           renderItem={({ item }) => (

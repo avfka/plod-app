@@ -3,6 +3,7 @@ import { ActivityIndicator, Text, View } from 'react-native';
 import { applyEventFilters, useActiveEvents } from '@/features/events/use-events';
 import { EventMap } from '@/features/map/event-map';
 import { FilterBar } from '@/features/map/filter-bar';
+import { SignalHeader } from '@/components/ui/signal-header';
 import { useProfile } from '@/features/profile/use-profile';
 import { useFilters } from '@/store/filters';
 import { Fonts, palette } from '@/theme';
@@ -20,6 +21,7 @@ export default function MapScreen() {
 
   return (
     <View className="flex-1 bg-paper dark:bg-night">
+      <SignalHeader eyebrow="PLOD / Live feed" title="Карта событий" meta={`${filtered.length} объектов`} />
       <FilterBar />
       {isPending ? (
         <View className="flex-1 items-center justify-center">

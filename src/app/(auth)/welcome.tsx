@@ -17,12 +17,15 @@ export default function WelcomeScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-paper dark:bg-night">
-      <View className="flex-1 justify-between px-6 py-10">
+      <View className="absolute left-7 top-0 h-full w-px bg-thread/50" />
+      <View className="absolute left-[24px] top-24 h-2 w-2 rounded-full bg-thread" />
+      <View className="absolute left-[24px] top-1/2 h-2 w-2 rounded-full border border-thread bg-paper dark:bg-night" />
+      <View className="flex-1 justify-between px-10 py-10">
         <View className="gap-2">
-          <Tag label="Case File · 01" />
+          <Tag label="Live / Case 01" />
           <Text
             style={{ fontFamily: Fonts.mono, letterSpacing: 10 }}
-            className="mt-4 text-5xl font-bold uppercase text-ink dark:text-paper-dark"
+            className="mt-4 text-6xl font-bold uppercase text-accent"
           >
             PLOD
           </Text>
@@ -32,7 +35,7 @@ export default function WelcomeScreen() {
           >
             Запретный плод
           </Text>
-          <View className="mt-2 h-[2px] w-24 bg-accent" />
+          <View className="mt-2 h-[3px] w-32 bg-accent" />
           <Text
             style={{ fontFamily: Fonts.mono }}
             className="mt-4 text-xs leading-5 text-[#6B6560] dark:text-[#A39D93]"

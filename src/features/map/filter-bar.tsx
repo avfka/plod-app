@@ -25,7 +25,15 @@ export function FilterBar() {
   };
 
   return (
-    <View className="gap-2 border-b border-[#D8D2C6] bg-paper px-3 py-2 dark:border-[#39342E] dark:bg-night">
+    <View className="gap-2 border-b border-ink bg-paper px-3 py-3 dark:border-paper-dark dark:bg-night">
+      <View className="flex-row items-center justify-between">
+        <Text style={{ fontFamily: Fonts.mono, letterSpacing: 1.5 }} className="text-[9px] font-bold uppercase text-accent">
+          Поиск / фильтры
+        </Text>
+        <Text style={{ fontFamily: Fonts.mono }} className="text-[9px] uppercase text-[#6B6560] dark:text-[#A39D93]">
+          REC ●
+        </Text>
+      </View>
       <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerClassName="gap-1.5">
         <FilterChip
           label={filters.date === today ? 'Сегодня' : filters.date ? filters.date : 'Любая дата'}
@@ -54,7 +62,7 @@ export function FilterBar() {
           />
         ))}
       </ScrollView>
-      <View className="flex-row items-center justify-between">
+      <View className="flex-row items-center justify-between border-t border-dashed border-[#D8D2C6] pt-2 dark:border-[#39342E]">
         <Text
           style={{ fontFamily: Fonts.mono, letterSpacing: 1 }}
           className="text-[10px] font-bold uppercase text-[#6B6560] dark:text-[#A39D93]"

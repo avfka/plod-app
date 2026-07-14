@@ -5,14 +5,14 @@ import { Fonts } from '@/theme';
 type ButtonVariant = 'primary' | 'accent' | 'outline' | 'ghost';
 
 const containerClasses: Record<ButtonVariant, string> = {
-  primary: 'bg-ink dark:bg-paper-dark',
+  primary: 'bg-accent border border-accent',
   accent: 'bg-accent',
   outline: 'bg-transparent border border-ink dark:border-paper-dark',
   ghost: 'bg-transparent',
 };
 
 const labelClasses: Record<ButtonVariant, string> = {
-  primary: 'text-paper dark:text-night',
+  primary: 'text-paper',
   accent: 'text-paper',
   outline: 'text-ink dark:text-paper-dark',
   ghost: 'text-accent',
@@ -32,7 +32,7 @@ export function Button({ label, variant = 'primary', loading, disabled, ...rest 
     <Pressable
       accessibilityRole="button"
       disabled={disabled || loading}
-      className={`h-12 flex-row items-center justify-center rounded-[4px] px-5 active:opacity-80 ${
+      className={`h-12 flex-row items-center justify-center rounded-[2px] px-5 active:opacity-80 ${
         containerClasses[variant]
       } ${disabled ? 'opacity-40' : ''}`}
       {...rest}

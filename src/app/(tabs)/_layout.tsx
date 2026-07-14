@@ -6,7 +6,7 @@ import type { ColorValue } from 'react-native';
 import { useProfile } from '@/features/profile/use-profile';
 import { useTheme } from '@/hooks/use-theme';
 import { useFilters } from '@/store/filters';
-import { Fonts } from '@/theme';
+import { Fonts, palette } from '@/theme';
 
 type IoniconName = keyof typeof Ionicons.glyphMap;
 
@@ -37,9 +37,15 @@ export default function TabsLayout() {
         tabBarInactiveTintColor: theme.tabIconDefault,
         tabBarStyle: {
           backgroundColor: theme.background,
-          borderTopColor: theme.borderMuted,
+          borderTopColor: palette.red,
+          borderTopWidth: 2,
+          height: 66,
+          paddingTop: 7,
+          paddingBottom: 7,
         },
-        tabBarLabelStyle: { fontFamily: Fonts.mono, fontSize: 10 },
+        tabBarItemStyle: { borderRadius: 2 },
+        tabBarLabelStyle: { fontFamily: Fonts.mono, fontSize: 9, letterSpacing: 0.6 },
+        headerShown: false,
         headerStyle: { backgroundColor: theme.background },
         headerTintColor: theme.text,
         headerTitleStyle: {
@@ -51,8 +57,8 @@ export default function TabsLayout() {
         sceneStyle: { backgroundColor: theme.background },
       }}
     >
-      <Tabs.Screen name="map" options={{ title: 'Карта', tabBarIcon: tabIcon('map-outline') }} />
-      <Tabs.Screen name="list" options={{ title: 'Список', tabBarIcon: tabIcon('list-outline') }} />
+      <Tabs.Screen name="map" options={{ title: 'Сигнал', tabBarIcon: tabIcon('scan-outline') }} />
+      <Tabs.Screen name="list" options={{ title: 'Досье', tabBarIcon: tabIcon('albums-outline') }} />
       <Tabs.Screen
         name="venues"
         options={{ title: 'Площадки', tabBarIcon: tabIcon('business-outline') }}
