@@ -4,14 +4,11 @@ import { Platform } from 'react-native';
 
 import type { Database } from '@/types/database';
 
-const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL;
-const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY;
-
-if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error(
-    'Не заданы EXPO_PUBLIC_SUPABASE_URL / EXPO_PUBLIC_SUPABASE_ANON_KEY (см. .env.example)',
-  );
-}
+const supabaseUrl =
+  process.env.EXPO_PUBLIC_SUPABASE_URL ?? 'https://roryjhgwvmdiopzsudgm.supabase.co';
+const supabaseAnonKey =
+  process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY ??
+  'sb_publishable_0wUJFdulfyemBH0lRuHbNA_wpojvU82';
 
 export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
   auth: {
