@@ -21,17 +21,24 @@ export default function WelcomeScreen() {
         <View className="gap-2">
           <Tag label="Case File · 01" />
           <Text
-            style={{ fontFamily: Fonts.mono, letterSpacing: 4 }}
-            className="mt-4 text-3xl font-bold uppercase text-ink dark:text-paper-dark"
+            style={{ fontFamily: Fonts.mono, letterSpacing: 10 }}
+            className="mt-4 text-5xl font-bold uppercase text-ink dark:text-paper-dark"
           >
-            Танц{'\n'}Карта
+            PLOD
+          </Text>
+          <Text
+            style={{ fontFamily: Fonts.mono, letterSpacing: 3 }}
+            className="text-xs font-bold uppercase text-accent"
+          >
+            Запретный плод
           </Text>
           <View className="mt-2 h-[2px] w-24 bg-accent" />
           <Text
             style={{ fontFamily: Fonts.mono }}
             className="mt-4 text-xs leading-5 text-[#6B6560] dark:text-[#A39D93]"
           >
-            Мастер-классы и чемпионаты{'\n'}на карте города.{'\n'}Следуй за красной ниткой.
+            Мастер-классы и чемпионаты{'\n'}на карте города.{'\n'}
+            Запретный плод сладок —{'\n'}следуй за красной ниткой.
           </Text>
         </View>
 

@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "Танц-Карта",
-    "slug": "tanz-karta",
+    "name": "PLOD",
+    "slug": "plod",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "tanzkarta",
+    "scheme": "plod",
     "userInterfaceStyle": "automatic",
     "ios": {
       "supportsTablet": false
