@@ -17,7 +17,7 @@ export function FilterChip({ label, selected = false, onPress, dotColor }: Filte
       accessibilityRole="button"
       accessibilityState={{ selected }}
       onPress={onPress}
-      className={`h-8 flex-row items-center gap-1.5 rounded-sm border px-3 active:opacity-80 ${
+      className={`h-8 flex-row items-center gap-1.5 rounded-[2px] border px-3 active:scale-[0.98] ${
         selected
           ? 'border-accent bg-accent'
           : 'border-ink bg-transparent dark:border-paper-dark'

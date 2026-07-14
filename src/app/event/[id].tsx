@@ -106,7 +106,13 @@ export default function EventScreen() {
             ) : null}
             <DossierRow
               label="Цена"
-              value={event.is_free ? 'Бесплатно' : event.price != null ? `${Number(event.price)} ₽` : '—'}
+              value={
+                event.is_free
+                  ? 'Бесплатно'
+                  : event.price != null
+                    ? `${Number(event.price)} ₽`
+                    : 'Не указана'
+              }
             />
             {seatsLeft != null ? (
               <DossierRow label="Мест" value={`${seatsLeft} из ${event.seats_total}`} />

@@ -13,7 +13,7 @@ export default function Step1Date() {
 
   return (
     <View className="flex-1 gap-4 bg-paper px-6 py-6 dark:bg-night">
-      <Tag label="Шаг 1 / 3" />
+      <Tag label="Дата" />
       <Text
         style={{ fontFamily: Fonts.mono, letterSpacing: 1 }}
         className="text-lg font-bold uppercase text-ink dark:text-paper-dark"

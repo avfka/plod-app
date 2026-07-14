@@ -1,5 +1,6 @@
 import { ActivityIndicator, FlatList, Text, View } from 'react-native';
 
+import { ScreenMasthead } from '@/components/ui/screen-masthead';
 import { applyEventFilters, useActiveEvents } from '@/features/events/use-events';
 import { EventCard } from '@/features/events/event-card';
 import { FilterBar } from '@/features/map/filter-bar';
@@ -16,6 +17,7 @@ export default function ListScreen() {
 
   return (
     <View className="flex-1 bg-paper dark:bg-night">
+      <ScreenMasthead title="События" meta={`${filtered.length} найдено`} />
       <FilterBar />
       {isPending ? (
         <View className="flex-1 items-center justify-center">
@@ -31,7 +33,7 @@ export default function ListScreen() {
         <FlatList
           data={filtered}
           keyExtractor={(e) => e.id}
-          contentContainerClassName="gap-3 p-4"
+          contentContainerClassName="gap-3 p-3"
           refreshing={isRefetching}
           onRefresh={refetch}
           renderItem={({ item }) => (

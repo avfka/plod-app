@@ -8,7 +8,8 @@ import { supabase } from '@/lib/supabase';
 import { Fonts } from '@/theme';
 
 const inputClass =
-  'h-12 rounded-[4px] border border-ink bg-paper px-3 text-ink dark:border-paper-dark dark:bg-night-element dark:text-paper-dark';
+  'h-12 rounded-[2px] border border-ink bg-paper px-3 text-ink dark:border-paper-dark dark:bg-night-element dark:text-paper-dark';
+const labelClass = 'text-[10px] font-bold uppercase text-ink dark:text-paper-dark';
 
 export default function EmailAuthScreen() {
   const router = useRouter();
@@ -49,25 +50,35 @@ export default function EmailAuthScreen() {
 
   return (
     <View className="flex-1 gap-3 bg-paper px-6 py-8 dark:bg-night">
-      <TextInput
-        className={inputClass}
-        style={{ fontFamily: Fonts.mono }}
-        placeholder="email"
-        placeholderTextColor="#8A847C"
-        autoCapitalize="none"
-        keyboardType="email-address"
-        value={email}
-        onChangeText={setEmail}
-      />
-      <TextInput
-        className={inputClass}
-        style={{ fontFamily: Fonts.mono }}
-        placeholder="пароль"
-        placeholderTextColor="#8A847C"
-        secureTextEntry
-        value={password}
-        onChangeText={setPassword}
-      />
+      <View className="gap-2">
+        <Text style={{ fontFamily: Fonts.mono }} className={labelClass}>
+          Email
+        </Text>
+        <TextInput
+          className={inputClass}
+          style={{ fontFamily: Fonts.mono }}
+          placeholder="name@example.com"
+          placeholderTextColor="#6B6560"
+          autoCapitalize="none"
+          keyboardType="email-address"
+          value={email}
+          onChangeText={setEmail}
+        />
+      </View>
+      <View className="gap-2">
+        <Text style={{ fontFamily: Fonts.mono }} className={labelClass}>
+          Пароль
+        </Text>
+        <TextInput
+          className={inputClass}
+          style={{ fontFamily: Fonts.mono }}
+          placeholder="Минимум 6 символов"
+          placeholderTextColor="#6B6560"
+          secureTextEntry
+          value={password}
+          onChangeText={setPassword}
+        />
+      </View>
       {error ? (
         <Text style={{ fontFamily: Fonts.mono }} className="text-xs text-accent">
           {error}
