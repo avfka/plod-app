@@ -24,6 +24,13 @@
     "plugins": [
       "expo-router",
       [
+        "expo-image-picker",
+        {
+          "photosPermission": "PLOD использует фото для обложки досье события.",
+          "cameraPermission": false
+        }
+      ],
+      [
         "expo-splash-screen",
         {
           "backgroundColor": "#141210",

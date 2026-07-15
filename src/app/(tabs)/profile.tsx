@@ -102,6 +102,20 @@ export default function ProfileScreen() {
         </View>
       </Card>
 
+      <Card>
+        <Tag label="Организатор" color="#141210" />
+        <Text className="mt-2 text-sm text-[#6B6560] dark:text-[#A39D93]">
+          Создавайте события, связывайте несколько сессий красной нитью и следите за модерацией.
+        </Text>
+        <View className="mt-4 gap-2">
+          <Button label="Создать событие" onPress={() => router.push('/event/create')} />
+          <Button label="Мои события" variant="outline" onPress={() => router.push('/events/mine')} />
+          {profile?.role === 'admin' ? (
+            <Button label="Очередь модерации" variant="ghost" onPress={() => router.push('/admin/moderation')} />
+          ) : null}
+        </View>
+      </Card>
+
       <Button
         label="Настроить ленту заново"
         variant="outline"
