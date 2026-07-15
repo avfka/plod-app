@@ -19,20 +19,28 @@ import {
   useBookings,
 } from '@/features/bookings/use-bookings';
 import { EventCard } from '@/features/events/event-card';
+import { useNow } from '@/hooks/use-now';
 import { Fonts, palette } from '@/theme';
 
 function bookingTime(booking: BookingWithEvent) {
-  return Math.max(
-    ...booking.event.event_sessions.map((session) =>
-      new Date(session.ends_at ?? session.starts_at).getTime(),
-    ),
-    0,
+  const selected = booking.event.event_sessions.find(
+    (session) => session.id === booking.session_id,
   );
+  return selected ? new Date(selected.ends_at ?? selected.starts_at).getTime() : 0;
+}
+
+function bookingStart(booking: BookingWithEvent) {
+  const selected = booking.event.event_sessions.find(
+    (session) => session.id === booking.session_id,
+  );
+  return selected ? new Date(selected.starts_at).getTime() : 0;
 }
 
 function BookingItem({ booking }: { booking: BookingWithEvent }) {
   const { cancel, bookingError } = useBookingActions(booking.event_id);
-  const canCancel = booking.status === 'active' && bookingTime(booking) >= Date.now();
+  const now = useNow();
+  const canCancel =
+    booking.status === 'active' && bookingStart(booking) > now + 24 * 60 * 60 * 1000;
 
   const onCancel = () => {
     Alert.alert('Отменить запись?', 'Место снова станет доступно другим участникам.', [
@@ -53,7 +61,7 @@ function BookingItem({ booking }: { booking: BookingWithEvent }) {
 
   return (
     <View className="gap-2">
-      <EventCard event={booking.event} />
+      <EventCard event={booking.event} sessionId={booking.session_id} />
       {canCancel ? (
         <Button
           label="Отменить запись"
@@ -70,6 +78,7 @@ export default function BookingsScreen() {
   const router = useRouter();
   const { isGuest, loading: sessionLoading } = useSession();
   const { data, isPending, error, refetch, isRefetching } = useBookings(!isGuest);
+  const now = useNow();
 
   if (sessionLoading || (!isGuest && isPending)) {
     return (
@@ -112,10 +121,10 @@ export default function BookingsScreen() {
 
   const visible = (data ?? []).filter((booking) => booking.status !== 'cancelled');
   const upcoming = visible
-    .filter((booking) => booking.status === 'active' && bookingTime(booking) >= Date.now())
+    .filter((booking) => booking.status === 'active' && bookingTime(booking) >= now)
     .sort((a, b) => bookingTime(a) - bookingTime(b));
   const history = visible
-    .filter((booking) => booking.status === 'attended' || bookingTime(booking) < Date.now())
+    .filter((booking) => booking.status === 'attended' || bookingTime(booking) < now)
     .sort((a, b) => bookingTime(b) - bookingTime(a));
 
   return (

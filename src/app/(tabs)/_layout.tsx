@@ -11,9 +11,10 @@ import { Fonts, palette } from '@/theme';
 type IoniconName = keyof typeof Ionicons.glyphMap;
 
 function tabIcon(name: IoniconName) {
-  return ({ color, size }: { color: ColorValue; size: number }) => (
-    <Ionicons name={name} color={color} size={size} />
-  );
+  function TabBarIcon({ color, size }: { color: ColorValue; size: number }) {
+    return <Ionicons name={name} color={color} size={size} />;
+  }
+  return TabBarIcon;
 }
 
 export default function TabsLayout() {

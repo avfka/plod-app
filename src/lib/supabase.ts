@@ -12,6 +12,8 @@ const supabaseAnonKey =
   'sb_publishable_0wUJFdulfyemBH0lRuHbNA_wpojvU82';
 
 export function getAuthRedirectUrl() {
+  const configuredUrl = process.env.EXPO_PUBLIC_SITE_URL;
+  if (configuredUrl) return configuredUrl.endsWith('/') ? configuredUrl : `${configuredUrl}/`;
   if (Platform.OS === 'web' && typeof window !== 'undefined') {
     return `${window.location.origin}/`;
   }

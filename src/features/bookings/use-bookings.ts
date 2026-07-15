@@ -45,6 +45,8 @@ function bookingError(error: unknown) {
   if (message.includes('EVENT_FULL')) return 'Все места уже заняты.';
   if (message.includes('EVENT_UNAVAILABLE')) return 'Событие больше недоступно.';
   if (message.includes('BOOKING_ALREADY_ATTENDED')) return 'Посещённую запись отменить нельзя.';
+  if (message.includes('TOO_LATE')) return 'Отмена закрывается за 24 часа до начала.';
+  if (message.includes('BOOKING_SESSION_MISSING')) return 'У записи не найдена выбранная сессия.';
   return 'Не удалось изменить запись. Попробуйте ещё раз.';
 }
 

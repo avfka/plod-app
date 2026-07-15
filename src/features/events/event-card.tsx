@@ -26,12 +26,14 @@ export function EventCard({
   event,
   isFavoriteChoreographer = false,
   inverted = false,
+  sessionId,
 }: {
   event: EventWithRelations;
   isFavoriteChoreographer?: boolean;
   inverted?: boolean;
+  sessionId?: string | null;
 }) {
-  const session = firstSession(event);
+  const session = firstSession(event, sessionId);
   const multiDay = event.event_sessions.length >= 2;
 
   return (
