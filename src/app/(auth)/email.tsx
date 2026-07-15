@@ -4,7 +4,7 @@ import { Text, TextInput, View } from 'react-native';
 
 import { Button } from '@/components/ui/button';
 import { setEntryDone } from '@/features/onboarding/use-onboarding';
-import { supabase } from '@/lib/supabase';
+import { getAuthRedirectUrl, supabase } from '@/lib/supabase';
 import { Fonts } from '@/theme';
 
 const inputClass =
@@ -31,7 +31,11 @@ export default function EmailAuthScreen() {
         await setEntryDone();
         router.replace('/(onboarding)/step1');
       } else {
-        const { data, error: e } = await supabase.auth.signUp({ email, password });
+        const { data, error: e } = await supabase.auth.signUp({
+          email,
+          password,
+          options: { emailRedirectTo: getAuthRedirectUrl() },
+        });
         if (e) throw e;
         if (data.session) {
           await setEntryDone();
