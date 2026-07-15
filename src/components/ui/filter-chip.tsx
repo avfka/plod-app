@@ -17,7 +17,8 @@ export function FilterChip({ label, selected = false, onPress, dotColor }: Filte
       accessibilityRole="button"
       accessibilityState={{ selected }}
       onPress={onPress}
-      className={`h-8 flex-row items-center gap-1.5 rounded-[2px] border px-3 active:scale-[0.98] ${
+      accessibilityLabel={`${label}${selected ? ', выбрано' : ''}`}
+      className={`min-h-10 flex-row items-center gap-1.5 rounded-[2px] border px-3 active:scale-[0.98] ${
         selected
           ? 'border-accent bg-accent'
           : 'border-ink bg-transparent dark:border-paper-dark'
@@ -28,7 +29,7 @@ export function FilterChip({ label, selected = false, onPress, dotColor }: Filte
       ) : null}
       <Text
         style={{ fontFamily: Fonts.mono, letterSpacing: 1 }}
-        className={`text-xs font-bold uppercase ${
+        className={`text-[12px] font-bold uppercase ${
           selected ? 'text-paper' : 'text-ink dark:text-paper-dark'
         }`}
       >
