@@ -76,6 +76,25 @@ export function applyEventFilters(
   return filtered;
 }
 
+export function searchEvents(events: EventWithRelations[], query: string) {
+  const needle = query.trim().toLocaleLowerCase('ru-RU');
+  if (!needle) return events;
+
+  return events.filter((event) => {
+    const searchable = [
+      event.title,
+      event.description,
+      event.direction?.name,
+      event.choreographer?.name,
+      ...event.event_sessions.map((session) => session.address),
+    ]
+      .filter(Boolean)
+      .join(' ')
+      .toLocaleLowerCase('ru-RU');
+    return searchable.includes(needle);
+  });
+}
+
 /** Ближайшая (или первая) сессия события — для строки даты в карточке. */
 export function firstSession(e: EventWithRelations) {
   return [...e.event_sessions].sort(

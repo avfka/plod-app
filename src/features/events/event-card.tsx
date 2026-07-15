@@ -25,9 +25,11 @@ function formatTime(iso: string) {
 export function EventCard({
   event,
   isFavoriteChoreographer = false,
+  inverted = false,
 }: {
   event: EventWithRelations;
   isFavoriteChoreographer?: boolean;
+  inverted?: boolean;
 }) {
   const session = firstSession(event);
   const multiDay = event.event_sessions.length >= 2;
@@ -38,9 +40,9 @@ export function EventCard({
         accessibilityRole="link"
         accessibilityLabel={`${event.title}. ${session ? `${formatDate(session.starts_at)}, ${formatTime(session.starts_at)}` : 'Дата не указана'}. ${event.is_free ? 'Бесплатно' : event.price != null ? `${Number(event.price)} рублей` : 'Цена не указана'}`}
         style={isFavoriteChoreographer ? { borderColor: palette.gold, borderWidth: 2 } : undefined}
-        className="min-h-32 flex-row overflow-hidden rounded-[2px] border border-ink bg-paper active:scale-[0.99] dark:border-paper-dark dark:bg-night-element"
+        className={`min-h-32 flex-row overflow-hidden rounded-[2px] border active:scale-[0.99] ${inverted ? 'border-paper-dark bg-night-element' : 'border-ink bg-paper dark:border-paper-dark dark:bg-night-element'}`}
       >
-        <View className="w-28 border-r border-ink dark:border-paper-dark">
+        <View className={`${inverted ? 'w-24 border-paper-dark' : 'w-28 border-ink dark:border-paper-dark'} border-r`}>
           {event.photo_url ? (
             <Image source={{ uri: event.photo_url }} style={{ flex: 1 }} contentFit="cover" />
           ) : (
@@ -67,7 +69,7 @@ export function EventCard({
           <Text
             numberOfLines={2}
             style={{ fontFamily: Fonts.mono, letterSpacing: 0.5 }}
-            className="text-[15px] font-bold uppercase leading-5 text-ink dark:text-paper-dark"
+            className={`text-[15px] font-bold uppercase leading-5 ${inverted ? 'text-paper-dark' : 'text-ink dark:text-paper-dark'}`}
           >
             {event.title}
           </Text>
@@ -75,17 +77,17 @@ export function EventCard({
           {event.choreographer ? (
             <Text
               style={{ fontFamily: Fonts.sans }}
-              className="text-[13px] text-[#5E5954] dark:text-[#B8B1A7]"
+              className={`text-[13px] ${inverted ? 'text-[#B8B1A7]' : 'text-[#5E5954] dark:text-[#B8B1A7]'}`}
             >
               {isFavoriteChoreographer ? '★ ' : ''}
               {event.choreographer.name}
             </Text>
           ) : null}
 
-          <View className="mt-auto flex-row items-center justify-between border-t border-dashed border-[#D8D2C6] pt-2 dark:border-[#39342E]">
+          <View className={`mt-auto flex-row items-center justify-between border-t border-dashed pt-2 ${inverted ? 'border-[#39342E]' : 'border-[#D8D2C6] dark:border-[#39342E]'}`}>
             <Text
               style={{ fontFamily: Fonts.mono }}
-              className="text-xs text-[#6B6560] dark:text-[#A39D93]"
+              className={`text-xs ${inverted ? 'text-[#A39D93]' : 'text-[#6B6560] dark:text-[#A39D93]'}`}
             >
               {session ? `${formatDate(session.starts_at)}, ${formatTime(session.starts_at)}` : 'Дата не указана'}
             </Text>
