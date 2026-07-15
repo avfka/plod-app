@@ -20,7 +20,12 @@ async function fetchActiveEvents(): Promise<EventWithRelations[]> {
     .eq('status', 'active')
     .order('created_at', { ascending: false });
   if (error) throw error;
-  return (data ?? []) as EventWithRelations[];
+  const now = Date.now();
+  return ((data ?? []) as EventWithRelations[]).filter((event) =>
+    event.event_sessions.some(
+      (session) => new Date(session.ends_at ?? session.starts_at).getTime() > now,
+    ),
+  );
 }
 
 /** Активные события целиком (датасет небольшой) — фильтры применяются на клиенте. */
@@ -97,7 +102,12 @@ export function searchEvents(events: EventWithRelations[], query: string) {
 
 /** Ближайшая (или первая) сессия события — для строки даты в карточке. */
 export function firstSession(e: EventWithRelations) {
-  return [...e.event_sessions].sort(
+  const sessions = [...e.event_sessions].sort(
     (a, b) => new Date(a.starts_at).getTime() - new Date(b.starts_at).getTime(),
-  )[0];
+  );
+  return (
+    sessions.find(
+      (session) => new Date(session.ends_at ?? session.starts_at).getTime() > Date.now(),
+    ) ?? sessions[0]
+  );
 }

@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Tabs } from 'expo-router';
 import { useEffect, useRef } from 'react';
-import type { ColorValue } from 'react-native';
+import { Platform, type ColorValue } from 'react-native';
 
 import { useProfile } from '@/features/profile/use-profile';
 import { useTheme } from '@/hooks/use-theme';
@@ -56,7 +56,14 @@ export default function TabsLayout() {
         sceneStyle: { backgroundColor: theme.background },
       }}
     >
-      <Tabs.Screen name="map" options={{ title: 'Карта', tabBarIcon: tabIcon('scan-outline') }} />
+      <Tabs.Screen
+        name="map"
+        options={{
+          title: 'Карта',
+          tabBarIcon: tabIcon('scan-outline'),
+          href: Platform.OS === 'web' ? null : '/map',
+        }}
+      />
       <Tabs.Screen
         name="list"
         options={{
@@ -74,7 +81,11 @@ export default function TabsLayout() {
       />
       <Tabs.Screen
         name="venues"
-        options={{ title: 'Площадки', tabBarIcon: tabIcon('business-outline') }}
+        options={{
+          title: 'Площадки',
+          tabBarIcon: tabIcon('business-outline'),
+          href: null,
+        }}
       />
       <Tabs.Screen
         name="bookings"
