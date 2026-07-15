@@ -61,6 +61,7 @@ export type ThemeColors = (typeof Colors)[ThemeName];
 export const Fonts = {
   mono: Platform.select({ ios: 'Menlo', android: 'monospace', default: 'monospace' })!,
   sans: Platform.select({ ios: 'system-ui', android: 'normal', default: 'sans-serif' })!,
+  serif: Platform.select({ ios: 'Georgia', android: 'serif', default: 'Georgia' })!,
 } as const;
 
 export const Spacing = {

@@ -1,23 +1,17 @@
 import { Image } from 'expo-image';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
+import { useState } from 'react';
 import { ActivityIndicator, Alert, ScrollView, Text, View } from 'react-native';
 
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { DossierRow, Tag } from '@/components/ui/tag';
 import { useSession } from '@/features/auth/use-session';
+import { useBookingActions, useEventBooking } from '@/features/bookings/use-bookings';
+import { bookingDate, RedThreadTimeline } from '@/features/events/red-thread-timeline';
 import { useEvent } from '@/features/events/use-events';
 import { useProfile } from '@/features/profile/use-profile';
 import { Fonts, palette } from '@/theme';
-
-function formatSession(iso: string) {
-  return new Date(iso).toLocaleString('ru-RU', {
-    day: 'numeric',
-    month: 'long',
-    hour: '2-digit',
-    minute: '2-digit',
-  });
-}
 
 export default function EventScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -25,6 +19,9 @@ export default function EventScreen() {
   const { isGuest } = useSession();
   const { data: profile } = useProfile();
   const { data: event, isPending, error } = useEvent(id);
+  const { data: booking } = useEventBooking(id, !isGuest);
+  const { book, cancel, bookingError } = useBookingActions(id ?? '');
+  const [selectedSessionId, setSelectedSessionId] = useState<string>();
 
   if (isPending) {
     return (
@@ -51,29 +48,75 @@ export default function EventScreen() {
     event.choreographer_id === profile.favorite_choreographer_id;
   const seatsLeft =
     event.seats_total != null ? event.seats_total - event.seats_taken : null;
+  const hasUpcomingSession = sessions.some(
+    (session) => new Date(session.ends_at ?? session.starts_at).getTime() > Date.now(),
+  );
+  const selectedSession =
+    sessions.find((session) => session.id === selectedSessionId) ??
+    sessions.find((session) => session.id === booking?.session_id) ??
+    sessions.find(
+      (session) => new Date(session.ends_at ?? session.starts_at).getTime() > Date.now(),
+    ) ??
+    sessions[0];
 
-  const onBook = () => {
+  const isBooked = booking?.status === 'active' || booking?.status === 'attended';
+  const isAttended = booking?.status === 'attended';
+
+  const onBook = async () => {
     if (isGuest) {
       router.push('/(auth)/welcome');
       return;
     }
-    // book_event RPC — Фаза 3
-    Alert.alert('Скоро', 'Запись на события появится в следующем обновлении.');
+    if (!selectedSession) return;
+    try {
+      await book.mutateAsync(selectedSession.id);
+      Alert.alert('Вы записаны', 'Событие добавлено в раздел «Мои записи».');
+    } catch (mutationError) {
+      Alert.alert('Не получилось записаться', bookingError(mutationError));
+    }
+  };
+
+  const onCancel = () => {
+    Alert.alert('Отменить запись?', 'Место снова станет доступно другим участникам.', [
+      { text: 'Оставить запись', style: 'cancel' },
+      {
+        text: 'Отменить запись',
+        style: 'destructive',
+        onPress: async () => {
+          try {
+            await cancel.mutateAsync();
+          } catch (mutationError) {
+            Alert.alert('Не получилось отменить', bookingError(mutationError));
+          }
+        },
+      },
+    ]);
   };
 
   return (
     <>
-      <Stack.Screen options={{ title: 'Pass Card' }} />
-      <ScrollView className="flex-1 bg-paper dark:bg-night" contentContainerClassName="gap-4 p-4">
-        <Card className="overflow-hidden p-0">
+      <Stack.Screen
+        options={{
+          title: 'Pass Card',
+          headerStyle: { backgroundColor: palette.paper },
+          headerTintColor: palette.ink,
+          headerTitleStyle: { fontFamily: Fonts.mono },
+          headerShadowVisible: true,
+        }}
+      />
+      <ScrollView className="flex-1 bg-paper dark:bg-night" contentContainerClassName="items-center p-4">
+        <Card className="w-full max-w-6xl overflow-hidden p-0">
           {event.photo_url ? (
-            <Image source={{ uri: event.photo_url }} style={{ height: 200 }} contentFit="cover" />
+            <View className="p-3 pb-0">
+              <Image source={{ uri: event.photo_url }} style={{ height: 148 }} contentFit="cover" />
+            </View>
           ) : (
             <View
-              style={{ backgroundColor: event.direction?.color_hex ?? '#8A847C', height: 120 }}
+              style={{ backgroundColor: event.direction?.color_hex ?? '#8A847C', height: 148 }}
+              className="m-3 mb-0"
             />
           )}
-          <View className="gap-2 p-4">
+          <View className="gap-2 px-5 py-3">
             <View className="flex-row flex-wrap gap-1.5">
               {event.direction ? (
                 <Tag label={event.direction.name} color={event.direction.color_hex} />
@@ -82,8 +125,8 @@ export default function EventScreen() {
               {isFavorite ? <Tag label="★ Ваш хореограф" color="#B8860B" /> : null}
             </View>
             <Text
-              style={{ fontFamily: Fonts.mono, letterSpacing: 1 }}
-              className="text-xl font-bold uppercase text-ink dark:text-paper-dark"
+              style={{ fontFamily: Fonts.serif, letterSpacing: 1 }}
+              className="text-2xl font-bold uppercase text-ink dark:text-paper-dark"
             >
               {event.title}
             </Text>
@@ -96,81 +139,79 @@ export default function EventScreen() {
               </Text>
             ) : null}
           </View>
-        </Card>
+          <View className="gap-5 border-t border-ink p-5 dark:border-paper-dark md:flex-row md:items-stretch">
+            <View className="md:w-[42%]">
+              {selectedSession ? (
+                <RedThreadTimeline
+                  sessions={sessions}
+                  selectedId={selectedSession.id}
+                  seatsLeft={seatsLeft}
+                  onSelect={setSelectedSessionId}
+                />
+              ) : null}
+            </View>
 
-        <Card>
-          <Tag label="Данные" color="#141210" />
-          <View className="mt-2">
-            {event.choreographer ? (
-              <DossierRow label="Хореограф" value={event.choreographer.name} />
-            ) : null}
-            <DossierRow
-              label="Цена"
-              value={
-                event.is_free
-                  ? 'Бесплатно'
-                  : event.price != null
-                    ? `${Number(event.price)} ₽`
-                    : 'Не указана'
-              }
-            />
-            {seatsLeft != null ? (
-              <DossierRow label="Мест" value={`${seatsLeft} из ${event.seats_total}`} />
-            ) : null}
-            {event.age_restriction ? (
-              <DossierRow label="Возраст" value={event.age_restriction} />
-            ) : null}
-            {event.contact_phone ? (
-              <DossierRow label="Контакт" value={event.contact_phone} />
-            ) : null}
-          </View>
-        </Card>
-
-        <Card>
-          <Tag label={sessions.length >= 2 ? 'Красная нитка' : 'Где и когда'} />
-          <View className="mt-3">
-            {sessions.map((s, i) => (
-              <View key={s.id} className="flex-row gap-3">
-                <View className="items-center">
-                  <View className="h-6 w-6 items-center justify-center rounded-full bg-accent">
-                    <Text
-                      style={{ fontFamily: Fonts.mono }}
-                      className="text-[11px] font-bold text-paper"
-                    >
-                      {s.day_number}
-                    </Text>
-                  </View>
-                  {i < sessions.length - 1 ? (
-                    <View className="w-[2px] flex-1 bg-thread" />
+            <Card className="flex-1 justify-between gap-4">
+              <View>
+                <Tag label="Данные" color="#141210" />
+                <View className="mt-3">
+                  {event.choreographer ? (
+                    <DossierRow label="Хореограф" value={event.choreographer.name} />
+                  ) : null}
+                  <DossierRow
+                    label="Цена"
+                    value={
+                      event.is_free
+                        ? 'Бесплатно'
+                        : event.price != null
+                          ? `${Number(event.price)} ₽`
+                          : 'Не указана'
+                    }
+                  />
+                  {seatsLeft != null ? (
+                    <DossierRow label="Мест" value={`Осталось ${seatsLeft}`} />
+                  ) : null}
+                  {event.age_restriction ? (
+                    <DossierRow label="Возраст" value={event.age_restriction} />
+                  ) : null}
+                  {event.contact_phone ? (
+                    <DossierRow label="Контакт" value={event.contact_phone} />
                   ) : null}
                 </View>
-                <View className="flex-1 pb-4">
-                  <Text
-                    style={{ fontFamily: Fonts.mono }}
-                    className="text-xs font-bold text-ink dark:text-paper-dark"
-                  >
-                    {formatSession(s.starts_at)}
-                  </Text>
-                  <Text
-                    style={{ fontFamily: Fonts.mono }}
-                    className="text-xs text-[#6B6560] dark:text-[#A39D93]"
-                  >
-                    {s.address}
-                  </Text>
-                </View>
               </View>
-            ))}
+
+              {isBooked ? (
+                <View className="gap-3">
+                  <Tag label={isAttended ? 'Дело закрыто · посещено' : 'Место подтверждено'} />
+                  {!isAttended ? (
+                    <Button
+                      label="Отменить запись"
+                      variant="outline"
+                      loading={cancel.isPending}
+                      onPress={onCancel}
+                    />
+                  ) : null}
+                </View>
+              ) : (
+              <Button
+                  label={
+                    !hasUpcomingSession
+                      ? 'Событие завершено'
+                      : seatsLeft === 0
+                        ? 'Мест нет'
+                        : selectedSession
+                          ? `Забронировать на ${bookingDate(selectedSession.starts_at)}`
+                          : 'Забронировать'
+                  }
+                  variant="accent"
+                  loading={book.isPending}
+                  disabled={!hasUpcomingSession || seatsLeft === 0 || !selectedSession}
+                  onPress={onBook}
+              />
+              )}
+            </Card>
           </View>
         </Card>
-
-        <Button
-          label={
-            seatsLeft === 0 ? 'Мест нет' : isGuest ? 'Войти, чтобы записаться' : 'Записаться'
-          }
-          variant="accent"
-          disabled={seatsLeft === 0}
-          onPress={onBook}
-        />
       </ScrollView>
     </>
   );
