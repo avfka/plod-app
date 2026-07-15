@@ -1,4 +1,4 @@
-import { ScrollView, Switch, Text, View } from 'react-native';
+import { Pressable, ScrollView, Switch, Text, View } from 'react-native';
 
 import { FilterChip } from '@/components/ui/filter-chip';
 import { useDanceDirections } from '@/features/onboarding/use-directories';
@@ -17,16 +17,54 @@ export function FilterBar() {
   const filters = useFilters();
   const { data: directions } = useDanceDirections();
   const today = todayYmd();
+  const activeCount =
+    Number(filters.date !== null) +
+    Number(filters.directionId !== null) +
+    Number(filters.freeOnly) +
+    Number(filters.types.length > 0);
+
+  const reset = () =>
+    filters.set({
+      date: null,
+      types: [],
+      directionId: null,
+      choreographerId: null,
+      freeOnly: false,
+    });
 
   const toggleType = (t: 'masterclass' | 'championship') => {
     const has = filters.types.includes(t);
     const next = has ? filters.types.filter((x) => x !== t) : [...filters.types, t];
-    if (next.length > 0) filters.set({ types: next }); // хотя бы один тип
+    filters.set({ types: next });
   };
 
   return (
-    <View className="gap-2 border-b border-ink bg-paper px-3 py-3 dark:border-paper-dark dark:bg-night">
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerClassName="gap-1.5">
+    <View className="gap-2.5 border-b border-ink bg-paper py-3 dark:border-paper-dark dark:bg-night">
+      <View className="flex-row items-center justify-between px-3">
+        <Text
+          style={{ fontFamily: Fonts.sans }}
+          className="text-sm font-semibold text-ink dark:text-paper-dark"
+        >
+          Быстрый выбор
+        </Text>
+        {activeCount > 0 ? (
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={`Сбросить фильтры, выбрано ${activeCount}`}
+            onPress={reset}
+            className="min-h-8 justify-center px-1 active:opacity-60"
+          >
+            <Text style={{ fontFamily: Fonts.sans }} className="text-xs font-semibold text-accent">
+              Сбросить ({activeCount})
+            </Text>
+          </Pressable>
+        ) : null}
+      </View>
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerClassName="gap-2 px-3"
+      >
         <FilterChip
           label={filters.date === today ? 'Сегодня' : filters.date ? filters.date : 'Любая дата'}
           selected={filters.date !== null}
@@ -54,19 +92,26 @@ export function FilterBar() {
           />
         ))}
       </ScrollView>
-      <View className="flex-row items-center justify-between border-t border-dashed border-[#D8D2C6] pt-2 dark:border-[#39342E]">
+      <Pressable
+        accessibilityRole="switch"
+        accessibilityState={{ checked: filters.freeOnly }}
+        accessibilityLabel="Показывать только бесплатные события"
+        onPress={() => filters.set({ freeOnly: !filters.freeOnly })}
+        className="mx-3 min-h-11 flex-row items-center justify-between border-t border-dashed border-[#D8D2C6] pt-2 active:opacity-70 dark:border-[#39342E]"
+      >
         <Text
-          style={{ fontFamily: Fonts.mono, letterSpacing: 1 }}
-          className="text-[10px] font-bold uppercase text-[#6B6560] dark:text-[#A39D93]"
+          style={{ fontFamily: Fonts.sans }}
+          className="text-sm font-medium text-ink dark:text-paper-dark"
         >
           Только бесплатные
         </Text>
         <Switch
           value={filters.freeOnly}
-          onValueChange={(v) => filters.set({ freeOnly: v })}
           trackColor={{ true: palette.red }}
+          accessibilityElementsHidden
+          pointerEvents="none"
         />
-      </View>
+      </Pressable>
     </View>
   );
 }

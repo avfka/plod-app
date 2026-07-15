@@ -7,7 +7,15 @@ import { firstSession, type EventWithRelations } from '@/features/events/use-eve
 import { Fonts, palette } from '@/theme';
 
 function formatDate(iso: string) {
-  return new Date(iso).toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' });
+  return new Date(iso).toLocaleDateString('ru-RU', {
+    weekday: 'short',
+    day: 'numeric',
+    month: 'short',
+  });
+}
+
+function formatTime(iso: string) {
+  return new Date(iso).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
 }
 
 /**
@@ -27,10 +35,12 @@ export function EventCard({
   return (
     <Link href={{ pathname: '/event/[id]', params: { id: event.id } }} asChild>
       <Pressable
+        accessibilityRole="link"
+        accessibilityLabel={`${event.title}. ${session ? `${formatDate(session.starts_at)}, ${formatTime(session.starts_at)}` : 'Дата не указана'}. ${event.is_free ? 'Бесплатно' : event.price != null ? `${Number(event.price)} рублей` : 'Цена не указана'}`}
         style={isFavoriteChoreographer ? { borderColor: palette.gold, borderWidth: 2 } : undefined}
-        className="flex-row overflow-hidden rounded-[2px] border border-ink bg-paper active:scale-[0.99] dark:border-paper-dark dark:bg-night-element"
+        className="min-h-32 flex-row overflow-hidden rounded-[2px] border border-ink bg-paper active:scale-[0.99] dark:border-paper-dark dark:bg-night-element"
       >
-        <View className="h-28 w-24 border-r border-ink dark:border-paper-dark">
+        <View className="w-28 border-r border-ink dark:border-paper-dark">
           {event.photo_url ? (
             <Image source={{ uri: event.photo_url }} style={{ flex: 1 }} contentFit="cover" />
           ) : (
@@ -45,7 +55,7 @@ export function EventCard({
           )}
         </View>
 
-        <View className="flex-1 gap-1 p-3">
+        <View className="min-w-0 flex-1 gap-1.5 p-3">
           <View className="flex-row flex-wrap gap-1">
             {event.direction ? (
               <Tag label={event.direction.name} color={event.direction.color_hex} />
@@ -57,33 +67,33 @@ export function EventCard({
           <Text
             numberOfLines={2}
             style={{ fontFamily: Fonts.mono, letterSpacing: 0.5 }}
-            className="text-sm font-bold uppercase text-ink dark:text-paper-dark"
+            className="text-[15px] font-bold uppercase leading-5 text-ink dark:text-paper-dark"
           >
             {event.title}
           </Text>
 
           {event.choreographer ? (
             <Text
-              style={{ fontFamily: Fonts.mono }}
-              className="text-xs text-[#6B6560] dark:text-[#A39D93]"
+              style={{ fontFamily: Fonts.sans }}
+              className="text-[13px] text-[#5E5954] dark:text-[#B8B1A7]"
             >
               {isFavoriteChoreographer ? '★ ' : ''}
               {event.choreographer.name}
             </Text>
           ) : null}
 
-          <View className="mt-auto flex-row items-center justify-between border-t border-dashed border-[#D8D2C6] pt-1.5 dark:border-[#39342E]">
+          <View className="mt-auto flex-row items-center justify-between border-t border-dashed border-[#D8D2C6] pt-2 dark:border-[#39342E]">
             <Text
               style={{ fontFamily: Fonts.mono }}
               className="text-xs text-[#6B6560] dark:text-[#A39D93]"
             >
-              {session ? formatDate(session.starts_at) : 'Нет даты'}
+              {session ? `${formatDate(session.starts_at)}, ${formatTime(session.starts_at)}` : 'Дата не указана'}
             </Text>
             <Text
               style={{ fontFamily: Fonts.mono }}
               className="text-xs font-bold uppercase text-accent"
             >
-              {event.is_free ? 'Free' : event.price != null ? `${Number(event.price)} ₽` : ''}
+              {event.is_free ? 'Бесплатно' : event.price != null ? `${Number(event.price)} ₽` : 'Цена позже'}
             </Text>
           </View>
         </View>
