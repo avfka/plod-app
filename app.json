@@ -11,6 +11,9 @@
       "supportsTablet": false
     },
     "android": {
+      "blockedPermissions": [
+        "android.permission.RECORD_AUDIO"
+      ],
       "adaptiveIcon": {
         "backgroundColor": "#141210",
         "foregroundImage": "./assets/images/plod-thread-icon-foreground.png"

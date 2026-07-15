@@ -12,12 +12,12 @@ const supabaseAnonKey =
   'sb_publishable_0wUJFdulfyemBH0lRuHbNA_wpojvU82';
 
 export function getAuthRedirectUrl() {
-  const configuredUrl = process.env.EXPO_PUBLIC_SITE_URL;
-  if (configuredUrl) return configuredUrl.endsWith('/') ? configuredUrl : `${configuredUrl}/`;
   if (Platform.OS === 'web' && typeof window !== 'undefined') {
+    const configuredUrl = process.env.EXPO_PUBLIC_SITE_URL;
+    if (configuredUrl) return configuredUrl.endsWith('/') ? configuredUrl : `${configuredUrl}/`;
     return `${window.location.origin}/`;
   }
-  return Linking.createURL('/');
+  return Linking.createURL('/', { scheme: 'plod' });
 }
 
 export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {

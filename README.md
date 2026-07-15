@@ -59,4 +59,13 @@ supabase/
 нативная beta, push/chat/reviews и площадки идут отдельными релизами по
 [`docs/IMPLEMENTATION_PLAN.md`](docs/IMPLEMENTATION_PLAN.md).
 
-Для карты на устройстве нужны ключи Google Maps (iOS/Android) в app.json.
+Для карты на устройстве нужны отдельные ограниченные ключи Google Maps iOS/Android.
+Они читаются из `EXPO_PUBLIC_GOOGLE_MAPS_IOS_API_KEY` и
+`EXPO_PUBLIC_GOOGLE_MAPS_ANDROID_API_KEY` через `app.config.js`; ключи не
+коммитятся. Для нативного подтверждения email добавьте `plod://**` в Supabase
+Auth → URL Configuration → Additional Redirect URLs.
+
+Нативные сборки настроены профилями `development`, `development-simulator`,
+`preview` и `production` в `eas.json`. Перед первой облачной сборкой выполните
+`eas login`, `eas init`, затем добавьте переменные окружения в EAS и запустите
+`eas build --profile preview --platform android` или `ios`.

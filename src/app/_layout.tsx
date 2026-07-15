@@ -5,10 +5,12 @@ import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useState } from 'react';
 
+import { useNativeAuthLink } from '@/features/auth/native-auth-link';
 import { useTheme, useThemeName } from '@/hooks/use-theme';
 import { Fonts } from '@/theme';
 
 export default function RootLayout() {
+  useNativeAuthLink();
   const theme = useTheme();
   const themeName = useThemeName();
   const [queryClient] = useState(
