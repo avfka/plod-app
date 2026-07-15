@@ -18,6 +18,7 @@ type EventDraft = {
 };
 
 export type SessionDraft = {
+  city_id?: string;
   day_number: number;
   starts_at: string;
   ends_at: string | null;
@@ -27,11 +28,11 @@ export type SessionDraft = {
 };
 
 export type ManagedEvent = Tables<'events'> & {
-  event_sessions: Tables<'event_sessions'>[];
+  event_sessions: (Tables<'event_sessions'> & { city: Tables<'cities'> | null })[];
   direction: Tables<'dance_directions'> | null;
 };
 
-const MANAGED_SELECT = '*, event_sessions(*), direction:dance_directions(*)';
+const MANAGED_SELECT = '*, event_sessions(*, city:cities(*)), direction:dance_directions(*)';
 
 export function useMyEvents(userId?: string) {
   return useQuery({

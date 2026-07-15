@@ -161,6 +161,45 @@ export type Database = {
         }
         Relationships: []
       }
+      cities: {
+        Row: {
+          center_lat: number
+          center_lng: number
+          country_code: string
+          created_at: string
+          id: string
+          is_active: boolean
+          name: string
+          slug: string
+          sort_order: number
+          timezone: string
+        }
+        Insert: {
+          center_lat: number
+          center_lng: number
+          country_code?: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          name: string
+          slug: string
+          sort_order?: number
+          timezone: string
+        }
+        Update: {
+          center_lat?: number
+          center_lng?: number
+          country_code?: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          name?: string
+          slug?: string
+          sort_order?: number
+          timezone?: string
+        }
+        Relationships: []
+      }
       dance_directions: {
         Row: {
           color_hex: string
@@ -191,6 +230,7 @@ export type Database = {
       event_sessions: {
         Row: {
           address: string
+          city_id: string
           day_number: number
           ends_at: string | null
           event_id: string
@@ -201,6 +241,7 @@ export type Database = {
         }
         Insert: {
           address: string
+          city_id?: string
           day_number: number
           ends_at?: string | null
           event_id: string
@@ -211,6 +252,7 @@ export type Database = {
         }
         Update: {
           address?: string
+          city_id?: string
           day_number?: number
           ends_at?: string | null
           event_id?: string
@@ -220,6 +262,13 @@ export type Database = {
           starts_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "event_sessions_city_id_fkey"
+            columns: ["city_id"]
+            isOneToOne: false
+            referencedRelation: "cities"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "event_sessions_event_id_fkey"
             columns: ["event_id"]
@@ -390,6 +439,7 @@ export type Database = {
           avatar_url: string | null
           card_color: string
           city: string | null
+          city_id: string | null
           created_at: string
           email: string | null
           favorite_choreographer_id: string | null
@@ -406,6 +456,7 @@ export type Database = {
           avatar_url?: string | null
           card_color?: string
           city?: string | null
+          city_id?: string | null
           created_at?: string
           email?: string | null
           favorite_choreographer_id?: string | null
@@ -422,6 +473,7 @@ export type Database = {
           avatar_url?: string | null
           card_color?: string
           city?: string | null
+          city_id?: string | null
           created_at?: string
           email?: string | null
           favorite_choreographer_id?: string | null
@@ -435,6 +487,13 @@ export type Database = {
           role?: Database["public"]["Enums"]["user_role"]
         }
         Relationships: [
+          {
+            foreignKeyName: "profiles_city_id_fkey"
+            columns: ["city_id"]
+            isOneToOne: false
+            referencedRelation: "cities"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "profiles_favorite_choreographer_id_fkey"
             columns: ["favorite_choreographer_id"]
@@ -489,6 +548,7 @@ export type Database = {
       venues: {
         Row: {
           address: string
+          city_id: string
           created_at: string
           created_by: string | null
           description: string | null
@@ -508,6 +568,7 @@ export type Database = {
         }
         Insert: {
           address: string
+          city_id?: string
           created_at?: string
           created_by?: string | null
           description?: string | null
@@ -527,6 +588,7 @@ export type Database = {
         }
         Update: {
           address?: string
+          city_id?: string
           created_at?: string
           created_by?: string | null
           description?: string | null
@@ -545,6 +607,13 @@ export type Database = {
           status?: Database["public"]["Enums"]["venue_status"]
         }
         Relationships: [
+          {
+            foreignKeyName: "venues_city_id_fkey"
+            columns: ["city_id"]
+            isOneToOne: false
+            referencedRelation: "cities"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "venues_created_by_fkey"
             columns: ["created_by"]

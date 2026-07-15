@@ -54,8 +54,8 @@ describe('event discovery', () => {
     choreographer: { id: 'choreo-1', name: 'Алексей Летучий', slug: 'alexey-letuchiy', is_verified: true, created_at: '2026-07-15T00:00:00.000Z' },
     direction: { id: 'direction-1', name: 'Хип-хоп', slug: 'hiphop', color_hex: '#45B7D1', is_active: true, sort_order: 1 },
     event_sessions: [
-      { id: 'session-1', event_id: 'event-1', day_number: 1, starts_at: '2026-07-20T16:00:00.000Z', ends_at: '2026-07-20T18:00:00.000Z', address: 'Флакон', lat: 55.8, lng: 37.5 },
-      { id: 'session-2', event_id: 'event-1', day_number: 2, starts_at: '2026-07-21T16:00:00.000Z', ends_at: '2026-07-21T18:00:00.000Z', address: 'Артплей', lat: 55.7, lng: 37.6 },
+      { id: 'session-1', event_id: 'event-1', city_id: 'city-1', city: null, day_number: 1, starts_at: '2026-07-20T16:00:00.000Z', ends_at: '2026-07-20T18:00:00.000Z', address: 'Флакон', lat: 55.8, lng: 37.5 },
+      { id: 'session-2', event_id: 'event-1', city_id: 'city-1', city: null, day_number: 2, starts_at: '2026-07-21T16:00:00.000Z', ends_at: '2026-07-21T18:00:00.000Z', address: 'Артплей', lat: 55.7, lng: 37.6 },
     ],
   });
   const freeChampionship = event({

@@ -7,7 +7,7 @@ export { applyEventFilters, firstSession, searchEvents } from './event-utils';
 export type { EventWithRelations } from './event-utils';
 
 const EVENT_SELECT =
-  '*, event_sessions(*), direction:dance_directions(*), choreographer:choreographers(*)';
+  '*, event_sessions(*, city:cities(*)), direction:dance_directions(*), choreographer:choreographers(*)';
 
 async function fetchActiveEvents(): Promise<EventWithRelations[]> {
   const { data, error } = await supabase

@@ -3,6 +3,23 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 import type { Tables } from '@/types/database';
 
+/** Города запуска и их координаты для центрирования карты. */
+export function useCities() {
+  return useQuery({
+    queryKey: ['cities'],
+    staleTime: Infinity,
+    queryFn: async (): Promise<Tables<'cities'>[]> => {
+      const { data, error } = await supabase
+        .from('cities')
+        .select('*')
+        .eq('is_active', true)
+        .order('sort_order');
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
+}
+
 export function useDanceDirections() {
   return useQuery({
     queryKey: ['dance_directions'],

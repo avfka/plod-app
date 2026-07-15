@@ -2,7 +2,7 @@ import type { EventFilters } from '@/store/filters';
 import type { Tables } from '@/types/database';
 
 export type EventWithRelations = Tables<'events'> & {
-  event_sessions: Tables<'event_sessions'>[];
+  event_sessions: (Tables<'event_sessions'> & { city: Tables<'cities'> | null })[];
   direction: Tables<'dance_directions'> | null;
   choreographer: Tables<'choreographers'> | null;
 };
@@ -52,6 +52,7 @@ export function searchEvents(events: EventWithRelations[], query: string) {
       event.description,
       event.direction?.name,
       event.choreographer?.name,
+      ...event.event_sessions.map((session) => session.city?.name),
       ...event.event_sessions.map((session) => session.address),
     ]
       .filter(Boolean)
