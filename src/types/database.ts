@@ -25,6 +25,7 @@ export type Database = {
           created_at: string
           event_id: string
           id: string
+          session_id: string | null
           status: Database["public"]["Enums"]["booking_status"]
           user_id: string
         }
@@ -32,6 +33,7 @@ export type Database = {
           created_at?: string
           event_id: string
           id?: string
+          session_id?: string | null
           status?: Database["public"]["Enums"]["booking_status"]
           user_id: string
         }
@@ -39,6 +41,7 @@ export type Database = {
           created_at?: string
           event_id?: string
           id?: string
+          session_id?: string | null
           status?: Database["public"]["Enums"]["booking_status"]
           user_id?: string
         }
@@ -48,6 +51,13 @@ export type Database = {
             columns: ["event_id"]
             isOneToOne: false
             referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bookings_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "event_sessions"
             referencedColumns: ["id"]
           },
           {
@@ -546,6 +556,14 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      book_event: {
+        Args: { p_event_id: string; p_session_id: string }
+        Returns: Database["public"]["Enums"]["booking_status"]
+      }
+      cancel_booking: {
+        Args: { p_event_id: string }
+        Returns: Database["public"]["Enums"]["booking_status"]
+      }
       can_chat: { Args: { p_event_id: string }; Returns: boolean }
       can_see_event: { Args: { p_event_id: string }; Returns: boolean }
       is_admin: { Args: never; Returns: boolean }
