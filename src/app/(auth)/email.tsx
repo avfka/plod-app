@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { Text, TextInput, View } from 'react-native';
 
 import { Button } from '@/components/ui/button';
+import { authErrorMessage } from '@/features/auth/auth-error';
 import { setEntryDone } from '@/features/onboarding/use-onboarding';
 import { getAuthRedirectUrl, supabase } from '@/lib/supabase';
 import { Fonts } from '@/theme';
@@ -46,10 +47,26 @@ export default function EmailAuthScreen() {
         }
       }
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'Не получилось, попробуйте ещё раз');
+      setError(authErrorMessage(e));
     } finally {
       setLoading(false);
     }
+  };
+
+  const resendConfirmation = async () => {
+    setError(null);
+    setLoading(true);
+    const { error: resendError } = await supabase.auth.resend({
+      type: 'signup',
+      email,
+      options: { emailRedirectTo: getAuthRedirectUrl() },
+    });
+    setLoading(false);
+    if (resendError) {
+      setError(authErrorMessage(resendError));
+      return;
+    }
+    setInfo('Новое письмо отправлено. Используйте только последнюю ссылку.');
   };
 
   return (
@@ -89,9 +106,18 @@ export default function EmailAuthScreen() {
         </Text>
       ) : null}
       {info ? (
-        <Text style={{ fontFamily: Fonts.mono }} className="text-xs text-ink dark:text-paper-dark">
-          {info}
-        </Text>
+        <View className="gap-2">
+          <Text style={{ fontFamily: Fonts.mono }} className="text-xs text-ink dark:text-paper-dark">
+            {info}
+          </Text>
+          <Button
+            label="Отправить письмо повторно"
+            variant="outline"
+            loading={loading}
+            disabled={!email}
+            onPress={resendConfirmation}
+          />
+        </View>
       ) : null}
       <Button
         label={mode === 'signin' ? 'Войти' : 'Зарегистрироваться'}

@@ -3,6 +3,8 @@
 Кроссплатформенное мобильное приложение-карта для танцоров (МК и чемпионаты).
 Концепт названия: запретный плод сладок; красная нитка ведёт к нему на карте.
 
+Актуальный статус, границы beta и порядок реализации: `docs/IMPLEMENTATION_PLAN.md`.
+
 ## Стек
 - Expo (React Native) + TypeScript + Expo Router + NativeWind
 - Supabase: Postgres + Auth (phone/email) + Storage + Realtime + Edge Functions
@@ -31,3 +33,9 @@
 ## Команды
 - `npm run typecheck` — проверка типов
 - `npm run gen:types` — перегенерация src/types/database.ts из локальной Supabase-схемы
+
+## Текущий приоритет
+
+Сначала закрыть R0/R1 из `docs/IMPLEMENTATION_PLAN.md`: auth, schema/security drift,
+CI и надёжный discovery → session booking flow. Не начинать площадки, чат и push,
+пока release gate закрытой web beta не пройден.

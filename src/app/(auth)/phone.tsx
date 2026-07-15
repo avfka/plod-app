@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { Text, TextInput, View } from 'react-native';
 
 import { Button } from '@/components/ui/button';
+import { authErrorMessage } from '@/features/auth/auth-error';
 import { setEntryDone } from '@/features/onboarding/use-onboarding';
 import { supabase } from '@/lib/supabase';
 import { Fonts } from '@/theme';
@@ -25,7 +26,7 @@ export default function PhoneAuthScreen() {
     setLoading(false);
     if (e) {
       // до подключения SMS-провайдера (Twilio и т.п.) Supabase вернёт ошибку
-      setError(e.message);
+      setError(authErrorMessage(e));
       return;
     }
     setStep('otp');
@@ -41,7 +42,7 @@ export default function PhoneAuthScreen() {
     });
     setLoading(false);
     if (e) {
-      setError(e.message);
+      setError(authErrorMessage(e));
       return;
     }
     await setEntryDone();

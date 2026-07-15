@@ -101,11 +101,12 @@ export function searchEvents(events: EventWithRelations[], query: string) {
 }
 
 /** Ближайшая (или первая) сессия события — для строки даты в карточке. */
-export function firstSession(e: EventWithRelations) {
+export function firstSession(e: EventWithRelations, sessionId?: string | null) {
   const sessions = [...e.event_sessions].sort(
     (a, b) => new Date(a.starts_at).getTime() - new Date(b.starts_at).getTime(),
   );
   return (
+    sessions.find((session) => session.id === sessionId) ??
     sessions.find(
       (session) => new Date(session.ends_at ?? session.starts_at).getTime() > Date.now(),
     ) ?? sessions[0]

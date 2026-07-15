@@ -1,5 +1,6 @@
 import { Pressable, Text, View } from 'react-native';
 
+import { useNow } from '@/hooks/use-now';
 import type { Tables } from '@/types/database';
 import { Fonts, palette } from '@/theme';
 
@@ -35,15 +36,16 @@ export function RedThreadTimeline({
   seatsLeft: number | null;
   onSelect: (id: string) => void;
 }) {
+  const now = useNow();
   const nextId = sessions.find(
-    (session) => new Date(session.ends_at ?? session.starts_at).getTime() > Date.now(),
+    (session) => new Date(session.ends_at ?? session.starts_at).getTime() > now,
   )?.id;
 
   return (
     <View className="flex-1">
       {sessions.map((session, index) => {
         const selected = session.id === selectedId;
-        const upcoming = new Date(session.ends_at ?? session.starts_at).getTime() > Date.now();
+        const upcoming = new Date(session.ends_at ?? session.starts_at).getTime() > now;
         return (
           <View key={session.id} className="flex-row">
             <View className="w-10 items-center">

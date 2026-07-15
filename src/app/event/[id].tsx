@@ -11,6 +11,7 @@ import { useBookingActions, useEventBooking } from '@/features/bookings/use-book
 import { bookingDate, RedThreadTimeline } from '@/features/events/red-thread-timeline';
 import { useEvent } from '@/features/events/use-events';
 import { useProfile } from '@/features/profile/use-profile';
+import { useNow } from '@/hooks/use-now';
 import { Fonts, palette } from '@/theme';
 
 export default function EventScreen() {
@@ -22,6 +23,7 @@ export default function EventScreen() {
   const { data: booking } = useEventBooking(id, !isGuest);
   const { book, cancel, bookingError } = useBookingActions(id ?? '');
   const [selectedSessionId, setSelectedSessionId] = useState<string>();
+  const now = useNow();
 
   if (isPending) {
     return (
@@ -49,18 +51,22 @@ export default function EventScreen() {
   const seatsLeft =
     event.seats_total != null ? event.seats_total - event.seats_taken : null;
   const hasUpcomingSession = sessions.some(
-    (session) => new Date(session.ends_at ?? session.starts_at).getTime() > Date.now(),
+    (session) => new Date(session.ends_at ?? session.starts_at).getTime() > now,
   );
   const selectedSession =
     sessions.find((session) => session.id === selectedSessionId) ??
     sessions.find((session) => session.id === booking?.session_id) ??
     sessions.find(
-      (session) => new Date(session.ends_at ?? session.starts_at).getTime() > Date.now(),
+      (session) => new Date(session.ends_at ?? session.starts_at).getTime() > now,
     ) ??
     sessions[0];
 
   const isBooked = booking?.status === 'active' || booking?.status === 'attended';
   const isAttended = booking?.status === 'attended';
+  const canCancel =
+    booking?.status === 'active' &&
+    !!selectedSession &&
+    new Date(selectedSession.starts_at).getTime() > now + 24 * 60 * 60 * 1000;
 
   const onBook = async () => {
     if (isGuest) {
@@ -183,17 +189,24 @@ export default function EventScreen() {
               {isBooked ? (
                 <View className="gap-3">
                   <Tag label={isAttended ? 'Дело закрыто · посещено' : 'Место подтверждено'} />
-                  {!isAttended ? (
+                  {canCancel ? (
                     <Button
                       label="Отменить запись"
                       variant="outline"
                       loading={cancel.isPending}
                       onPress={onCancel}
                     />
+                  ) : !isAttended ? (
+                    <Text
+                      style={{ fontFamily: Fonts.mono }}
+                      className="text-xs leading-5 text-[#6B6560] dark:text-[#A39D93]"
+                    >
+                      Отмена закрывается за 24 часа до начала.
+                    </Text>
                   ) : null}
                 </View>
               ) : (
-              <Button
+                <Button
                   label={
                     !hasUpcomingSession
                       ? 'Событие завершено'
@@ -207,7 +220,7 @@ export default function EventScreen() {
                   loading={book.isPending}
                   disabled={!hasUpcomingSession || seatsLeft === 0 || !selectedSession}
                   onPress={onBook}
-              />
+                />
               )}
             </Card>
           </View>

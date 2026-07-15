@@ -4,7 +4,8 @@
 
 Тестовая web-версия: https://plod-dancers-app.vercel.app
 
-Технический спек — см. `CLAUDE.md` и `supabase/migrations/`.
+Технический спек — см. `CLAUDE.md`, актуальный план —
+[`docs/IMPLEMENTATION_PLAN.md`](docs/IMPLEMENTATION_PLAN.md), схема — `supabase/migrations/`.
 
 ## Стек
 
@@ -50,12 +51,12 @@ supabase/
 
 ## Статус
 
-Фазы 0–1 готовы: каркас, auth (email + телефон-заглушка до SMS-провайдера),
-гостевой режим, опросник (3 шага), карта с чб-стилем и маркерами направлений,
-«красная нитка» мультисессий, карточка события (pass card), список с фильтрами,
-профиль с дизайном карточки. Фикстуры — supabase/seed_fixtures.sql.
+Готовы discovery, auth/email + гостевой режим, опросник, нативная карта,
+красная нитка мультисессий, досье события, выбор сессии, booking RPC,
+«Мои записи», поиск и фильтры. Web beta опубликована на Vercel.
 
-Дальше: Фаза 2 — создание событий и модерация; Фаза 3 — брони (book_event),
-пуши, чат; Фаза 4 — площадки и полиш.
+Ближайший этап: release foundation и закрытая web beta. Создание событий,
+нативная beta, push/chat/reviews и площадки идут отдельными релизами по
+[`docs/IMPLEMENTATION_PLAN.md`](docs/IMPLEMENTATION_PLAN.md).
 
 Для карты на устройстве нужны ключи Google Maps (iOS/Android) в app.json.
