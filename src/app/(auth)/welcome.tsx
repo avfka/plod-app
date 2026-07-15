@@ -1,5 +1,5 @@
 import { useRouter } from 'expo-router';
-import { Text, View } from 'react-native';
+import { Platform, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Button } from '@/components/ui/button';
@@ -11,7 +11,7 @@ export default function WelcomeScreen() {
 
   const continueAsGuest = async () => {
     await setEntryDone();
-    router.replace('/(tabs)/map');
+    router.replace(Platform.OS === 'web' ? '/(tabs)/list' : '/(tabs)/map');
   };
 
   return (
@@ -44,10 +44,12 @@ export default function WelcomeScreen() {
         </View>
 
         <View className="gap-3">
-          <Button label="Войти по телефону" onPress={() => router.push('/(auth)/phone')} />
+          {Platform.OS !== 'web' ? (
+            <Button label="Войти по телефону" onPress={() => router.push('/(auth)/phone')} />
+          ) : null}
           <Button
             label="Войти по email"
-            variant="outline"
+            variant={Platform.OS === 'web' ? 'primary' : 'outline'}
             onPress={() => router.push('/(auth)/email')}
           />
           <Button label="Продолжить без входа" variant="ghost" onPress={continueAsGuest} />

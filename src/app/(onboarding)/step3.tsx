@@ -1,6 +1,6 @@
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
-import { Pressable, Text, TextInput, View } from 'react-native';
+import { Platform, Pressable, Text, TextInput, View } from 'react-native';
 
 import { Button } from '@/components/ui/button';
 import { Tag } from '@/components/ui/tag';
@@ -29,7 +29,7 @@ export default function Step3Choreographer() {
         interestedInChamp: draft.interestedInChamp,
         ...patch,
       });
-      router.replace('/(tabs)/map');
+      router.replace(Platform.OS === 'web' ? '/(tabs)/list' : '/(tabs)/map');
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Не удалось сохранить');
       setSaving(false);

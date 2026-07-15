@@ -1,5 +1,13 @@
 import { useRouter } from 'expo-router';
-import { ActivityIndicator, Alert, RefreshControl, ScrollView, Text, View } from 'react-native';
+import {
+  ActivityIndicator,
+  Alert,
+  Platform,
+  RefreshControl,
+  ScrollView,
+  Text,
+  View,
+} from 'react-native';
 
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -134,7 +142,12 @@ export default function BookingsScreen() {
           <Text style={{ fontFamily: Fonts.mono }} className="text-xs leading-5 text-[#6B6560]">
             Найдите событие на карте и нажмите «Записаться» в его досье.
           </Text>
-          <Button label="Открыть карту" onPress={() => router.push('/(tabs)/map')} />
+          <Button
+            label={Platform.OS === 'web' ? 'Найти событие' : 'Открыть карту'}
+            onPress={() =>
+              router.push(Platform.OS === 'web' ? '/(tabs)/list' : '/(tabs)/map')
+            }
+          />
         </Card>
       ) : null}
 
