@@ -1,8 +1,10 @@
+import { useState } from 'react';
 import { FlatList, Text, View } from 'react-native';
 
 import { Button } from '@/components/ui/button';
 import { ScreenMasthead } from '@/components/ui/screen-masthead';
-import { applyEventFilters, useActiveEvents } from '@/features/events/use-events';
+import { EventSearch } from '@/features/events/event-search';
+import { applyEventFilters, searchEvents, useActiveEvents } from '@/features/events/use-events';
 import { EventCard } from '@/features/events/event-card';
 import { FilterBar } from '@/features/map/filter-bar';
 import { useProfile } from '@/features/profile/use-profile';
@@ -13,8 +15,20 @@ export default function ListScreen() {
   const { data: events, isPending, error, refetch, isRefetching } = useActiveEvents();
   const { data: profile } = useProfile();
   const filters = useFilters();
+  const [query, setQuery] = useState('');
+  const [filtersVisible, setFiltersVisible] = useState(true);
 
-  const filtered = applyEventFilters(events ?? [], filters, profile?.favorite_choreographer_id);
+  const filteredByChips = applyEventFilters(
+    events ?? [],
+    filters,
+    profile?.favorite_choreographer_id,
+  );
+  const filtered = searchEvents(filteredByChips, query);
+  const activeFilterCount =
+    Number(filters.date !== null) +
+    Number(filters.directionId !== null) +
+    Number(filters.freeOnly) +
+    Number(filters.types.length > 0);
   const resetFilters = () =>
     filters.set({
       date: null,
@@ -25,9 +39,16 @@ export default function ListScreen() {
     });
 
   return (
-    <View className="flex-1 bg-paper dark:bg-night">
+    <View className="flex-1 bg-night">
       <ScreenMasthead title="События" meta={`${filtered.length} найдено`} />
-      <FilterBar />
+      <EventSearch
+        value={query}
+        filtersVisible={filtersVisible}
+        activeFilterCount={activeFilterCount}
+        onChangeText={setQuery}
+        onToggleFilters={() => setFiltersVisible((visible) => !visible)}
+      />
+      {filtersVisible ? <FilterBar showHeader={false} inverted /> : <View className="h-3 border-b border-paper-dark" />}
       {isPending ? (
         <View accessibilityLabel="Загрузка событий" className="gap-3 p-3">
           {[0, 1, 2, 3].map((item) => (
@@ -58,12 +79,13 @@ export default function ListScreen() {
         <FlatList
           data={filtered}
           keyExtractor={(e) => e.id}
-          contentContainerClassName="gap-3 p-3 pb-6"
+          contentContainerClassName="gap-3 px-[18px] py-3 pb-6"
           refreshing={isRefetching}
           onRefresh={refetch}
           renderItem={({ item }) => (
             <EventCard
               event={item}
+              inverted
               isFavoriteChoreographer={
                 !!profile?.favorite_choreographer_id &&
                 item.choreographer_id === profile.favorite_choreographer_id
@@ -82,9 +104,15 @@ export default function ListScreen() {
                 style={{ fontFamily: Fonts.sans }}
                 className="text-center text-sm leading-5 text-[#6B6560] dark:text-[#A39D93]"
               >
-                Измените дату или направление, чтобы увидеть больше событий.
+                {query
+                  ? 'Попробуйте другое название, стиль, хореографа или площадку.'
+                  : 'Измените дату или направление, чтобы увидеть больше событий.'}
               </Text>
-              <Button label="Сбросить фильтры" variant="outline" onPress={resetFilters} />
+              <Button
+                label={query ? 'Очистить поиск' : 'Сбросить фильтры'}
+                variant="outline"
+                onPress={query ? () => setQuery('') : resetFilters}
+              />
             </View>
           }
         />

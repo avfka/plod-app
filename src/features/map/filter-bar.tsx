@@ -13,7 +13,7 @@ function todayYmd() {
 }
 
 /** Компактная панель фильтров (карта и список): дата · тип · направление · бесплатные. */
-export function FilterBar() {
+export function FilterBar({ showHeader = true, inverted = false }: { showHeader?: boolean; inverted?: boolean }) {
   const filters = useFilters();
   const { data: directions } = useDanceDirections();
   const today = todayYmd();
@@ -39,8 +39,8 @@ export function FilterBar() {
   };
 
   return (
-    <View className="gap-2.5 border-b border-ink bg-paper py-3 dark:border-paper-dark dark:bg-night">
-      <View className="flex-row items-center justify-between px-3">
+    <View className={`gap-2.5 border-b py-3 ${inverted ? 'border-paper-dark bg-night' : 'border-ink bg-paper dark:border-paper-dark dark:bg-night'}`}>
+      {showHeader ? <View className="flex-row items-center justify-between px-3">
         <Text
           style={{ fontFamily: Fonts.sans }}
           className="text-sm font-semibold text-ink dark:text-paper-dark"
@@ -59,7 +59,7 @@ export function FilterBar() {
             </Text>
           </Pressable>
         ) : null}
-      </View>
+      </View> : null}
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
@@ -69,16 +69,19 @@ export function FilterBar() {
           label={filters.date === today ? 'Сегодня' : filters.date ? filters.date : 'Любая дата'}
           selected={filters.date !== null}
           onPress={() => filters.set({ date: filters.date === null ? today : null })}
+          inverted={inverted}
         />
         <FilterChip
           label="МК"
           selected={filters.types.includes('masterclass')}
           onPress={() => toggleType('masterclass')}
+          inverted={inverted}
         />
         <FilterChip
           label="Чемп"
           selected={filters.types.includes('championship')}
           onPress={() => toggleType('championship')}
+          inverted={inverted}
         />
         {(directions ?? []).map((d) => (
           <FilterChip
@@ -86,6 +89,7 @@ export function FilterBar() {
             label={d.name}
             dotColor={d.color_hex}
             selected={filters.directionId === d.id}
+            inverted={inverted}
             onPress={() =>
               filters.set({ directionId: filters.directionId === d.id ? null : d.id })
             }
@@ -97,11 +101,11 @@ export function FilterBar() {
         accessibilityState={{ checked: filters.freeOnly }}
         accessibilityLabel="Показывать только бесплатные события"
         onPress={() => filters.set({ freeOnly: !filters.freeOnly })}
-        className="mx-3 min-h-11 flex-row items-center justify-between border-t border-dashed border-[#D8D2C6] pt-2 active:opacity-70 dark:border-[#39342E]"
+        className={`mx-[18px] min-h-11 flex-row items-center justify-between border-t border-dashed pt-2 active:opacity-70 ${inverted ? 'border-[#39342E]' : 'border-[#D8D2C6] dark:border-[#39342E]'}`}
       >
         <Text
           style={{ fontFamily: Fonts.sans }}
-          className="text-sm font-medium text-ink dark:text-paper-dark"
+          className={`text-sm font-medium ${inverted ? 'text-[#A39D93]' : 'text-ink dark:text-paper-dark'}`}
         >
           Только бесплатные
         </Text>

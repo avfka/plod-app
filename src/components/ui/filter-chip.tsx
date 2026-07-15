@@ -8,10 +8,11 @@ export type FilterChipProps = {
   onPress?: () => void;
   /** Цвет направления из dance_directions.color_hex — квадрат-индикатор слева. */
   dotColor?: string;
+  inverted?: boolean;
 };
 
 /** Чип-«метка» как красные теги на CCTV-кадре: прямоугольник, моно, верхний регистр. */
-export function FilterChip({ label, selected = false, onPress, dotColor }: FilterChipProps) {
+export function FilterChip({ label, selected = false, onPress, dotColor, inverted = false }: FilterChipProps) {
   return (
     <Pressable
       accessibilityRole="button"
@@ -21,7 +22,9 @@ export function FilterChip({ label, selected = false, onPress, dotColor }: Filte
       className={`min-h-10 flex-row items-center gap-1.5 rounded-[2px] border px-3 active:scale-[0.98] ${
         selected
           ? 'border-accent bg-accent'
-          : 'border-ink bg-transparent dark:border-paper-dark'
+          : inverted
+            ? 'border-paper-dark bg-transparent'
+            : 'border-ink bg-transparent dark:border-paper-dark'
       }`}
     >
       {dotColor ? (
@@ -30,7 +33,7 @@ export function FilterChip({ label, selected = false, onPress, dotColor }: Filte
       <Text
         style={{ fontFamily: Fonts.mono, letterSpacing: 1 }}
         className={`text-[12px] font-bold uppercase ${
-          selected ? 'text-paper' : 'text-ink dark:text-paper-dark'
+          selected ? 'text-paper' : inverted ? 'text-paper-dark' : 'text-ink dark:text-paper-dark'
         }`}
       >
         {label}

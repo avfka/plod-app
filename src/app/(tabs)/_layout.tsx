@@ -57,7 +57,21 @@ export default function TabsLayout() {
       }}
     >
       <Tabs.Screen name="map" options={{ title: 'Карта', tabBarIcon: tabIcon('scan-outline') }} />
-      <Tabs.Screen name="list" options={{ title: 'События', tabBarIcon: tabIcon('albums-outline') }} />
+      <Tabs.Screen
+        name="list"
+        options={{
+          title: 'События',
+          tabBarIcon: tabIcon('albums-outline'),
+          tabBarStyle: {
+            backgroundColor: '#12100E',
+            borderTopColor: palette.red,
+            borderTopWidth: 2,
+            height: 72,
+            paddingBottom: 8,
+            paddingTop: 8,
+          },
+        }}
+      />
       <Tabs.Screen
         name="venues"
         options={{ title: 'Площадки', tabBarIcon: tabIcon('business-outline') }}
