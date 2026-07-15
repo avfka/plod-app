@@ -24,6 +24,7 @@ function event(
     event_type: 'masterclass',
     is_free: false,
     marker_icon: null,
+    moderation_reason: null,
     photo_url: null,
     price: 1000,
     seats_taken: 0,

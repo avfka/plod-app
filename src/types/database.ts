@@ -243,6 +243,7 @@ export type Database = {
           id: string
           is_free: boolean
           marker_icon: Database["public"]["Enums"]["marker_icon"] | null
+          moderation_reason: string | null
           photo_url: string | null
           price: number | null
           seats_taken: number
@@ -263,6 +264,7 @@ export type Database = {
           id?: string
           is_free?: boolean
           marker_icon?: Database["public"]["Enums"]["marker_icon"] | null
+          moderation_reason?: string | null
           photo_url?: string | null
           price?: number | null
           seats_taken?: number
@@ -283,6 +285,7 @@ export type Database = {
           id?: string
           is_free?: boolean
           marker_icon?: Database["public"]["Enums"]["marker_icon"] | null
+          moderation_reason?: string | null
           photo_url?: string | null
           price?: number | null
           seats_taken?: number
@@ -564,14 +567,18 @@ export type Database = {
         Args: { p_event_id: string }
         Returns: Database["public"]["Enums"]["booking_status"]
       }
-      can_chat: { Args: { p_event_id: string }; Returns: boolean }
-      can_see_event: { Args: { p_event_id: string }; Returns: boolean }
-      is_admin: { Args: never; Returns: boolean }
-      is_organizer: { Args: never; Returns: boolean }
+      create_event: {
+        Args: { p_event: Json; p_sessions: Json }
+        Returns: string
+      }
+      moderate_event: {
+        Args: { p_decision: string; p_event_id: string; p_reason?: string }
+        Returns: Database["public"]["Tables"]["events"]["Row"]
+      }
     }
     Enums: {
       booking_status: "active" | "cancelled" | "attended"
-      event_status: "pending" | "active" | "finished" | "cancelled"
+      event_status: "pending" | "rejected" | "active" | "finished" | "cancelled"
       event_type: "masterclass" | "championship"
       marker_icon: "star" | "circle" | "square" | "diamond" | "heart"
       moderation_status: "pending" | "approved" | "rejected"
@@ -705,7 +712,7 @@ export const Constants = {
   public: {
     Enums: {
       booking_status: ["active", "cancelled", "attended"],
-      event_status: ["pending", "active", "finished", "cancelled"],
+      event_status: ["pending", "rejected", "active", "finished", "cancelled"],
       event_type: ["masterclass", "championship"],
       marker_icon: ["star", "circle", "square", "diamond", "heart"],
       moderation_status: ["pending", "approved", "rejected"],
