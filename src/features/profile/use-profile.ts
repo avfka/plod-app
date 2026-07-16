@@ -30,7 +30,7 @@ export function useUpdateProfile() {
   return useMutation({
     mutationFn: async (patch: TablesUpdate<'profiles'>) => {
       const userId = session?.user.id;
-      if (!userId) throw new Error('NOT_AUTHENTICATED');
+      if (!userId) return null;
       const { data, error } = await supabase
         .from('profiles')
         .update(patch)
@@ -41,6 +41,7 @@ export function useUpdateProfile() {
       return data;
     },
     onSuccess: (data) => {
+      if (!data) return;
       queryClient.setQueryData(['profile', data.id], data);
     },
   });

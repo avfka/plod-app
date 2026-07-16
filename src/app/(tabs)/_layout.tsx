@@ -4,6 +4,7 @@ import { useEffect, useRef } from 'react';
 import { Platform, type ColorValue } from 'react-native';
 
 import { useProfile } from '@/features/profile/use-profile';
+import { getPreferredCityId } from '@/features/cities/city-preference';
 import { useTheme } from '@/hooks/use-theme';
 import { useFilters } from '@/store/filters';
 import { Fonts, palette } from '@/theme';
@@ -22,6 +23,14 @@ export default function TabsLayout() {
   const { data: profile } = useProfile();
   const applyProfileDefaults = useFilters((s) => s.applyProfileDefaults);
   const defaultsApplied = useRef(false);
+
+  useEffect(() => {
+    if (!profile) {
+      void getPreferredCityId().then((cityId) => {
+        if (cityId) useFilters.getState().set({ cityId });
+      });
+    }
+  }, [profile]);
 
   // дефолт-фильтры карты = ответы опросника (спек §6), один раз за сессию
   useEffect(() => {

@@ -2,6 +2,8 @@ import { Ionicons } from '@expo/vector-icons';
 import { Modal, Pressable, Text, View } from 'react-native';
 
 import { useCities } from '@/features/onboarding/use-directories';
+import { useUpdateProfile } from '@/features/profile/use-profile';
+import { setPreferredCityId } from './city-preference';
 import { useFilters } from '@/store/filters';
 import { Fonts, palette } from '@/theme';
 
@@ -14,6 +16,14 @@ export function CityContextBar({ inverted = false }: { inverted?: boolean }) {
   const open = useFilters((state) => state.cityPickerOpen);
   const setOpen = useFilters((state) => state.setCityPickerOpen);
   const selected = cities.find((city) => city.id === cityId);
+  const updateProfile = useUpdateProfile();
+
+  const selectCity = (city: (typeof cities)[number]) => {
+    setFilters({ cityId: city.id });
+    setOpen(false);
+    void setPreferredCityId(city.id);
+    updateProfile.mutate({ city_id: city.id, city: city.name });
+  };
 
   return (
     <>
@@ -55,7 +65,7 @@ export function CityContextBar({ inverted = false }: { inverted?: boolean }) {
                     key={city.id}
                     accessibilityRole="radio"
                     accessibilityState={{ checked: active }}
-                    onPress={() => { setFilters({ cityId: city.id }); setOpen(false); }}
+                    onPress={() => selectCity(city)}
                     className="min-h-14 flex-row items-center justify-between border-b border-ink px-1 active:bg-[#FCE8E5] dark:border-paper-dark"
                   >
                     <Text style={{ fontFamily: Fonts.mono }} className={`text-base font-bold uppercase ${active ? 'text-accent' : 'text-ink dark:text-paper-dark'}`}>{city.name}</Text>
