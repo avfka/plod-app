@@ -15,14 +15,14 @@ import { useNow } from '@/hooks/use-now';
 import { Fonts, palette } from '@/theme';
 
 export default function EventScreen() {
-  const { id } = useLocalSearchParams<{ id: string }>();
+  const { id, sessionId } = useLocalSearchParams<{ id: string; sessionId?: string }>();
   const router = useRouter();
   const { isGuest } = useSession();
   const { data: profile } = useProfile();
   const { data: event, isPending, error } = useEvent(id);
   const { data: booking } = useEventBooking(id, !isGuest);
   const { book, cancel, bookingError } = useBookingActions(id ?? '');
-  const [selectedSessionId, setSelectedSessionId] = useState<string>();
+  const [selectedSessionId, setSelectedSessionId] = useState<string | undefined>(sessionId);
   const now = useNow();
 
   if (isPending) {

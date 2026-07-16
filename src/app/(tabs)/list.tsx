@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { ScreenMasthead } from '@/components/ui/screen-masthead';
 import { CityContextBar } from '@/features/cities/city-context-bar';
 import { EventSearch } from '@/features/events/event-search';
+import { DiscoveryModeToggle } from '@/features/events/discovery-mode-toggle';
 import { applyEventFilters, searchEvents, useActiveEvents } from '@/features/events/use-events';
 import { EventCard } from '@/features/events/event-card';
 import { FilterBar } from '@/features/map/filter-bar';
@@ -50,7 +51,7 @@ export default function ListScreen() {
         onChangeText={setQuery}
         onToggleFilters={() => setFiltersVisible((visible) => !visible)}
       />
-      {filtersVisible ? <FilterBar showHeader={false} inverted /> : <View className="h-3 border-b border-paper-dark" />}
+      {filtersVisible ? <FilterBar showHeader={false} inverted><DiscoveryModeToggle mode="list" inverted /></FilterBar> : <View className="h-3 border-b border-paper-dark" />}
       {isPending ? (
         <View accessibilityLabel="Загрузка событий" className="gap-3 p-3">
           {[0, 1, 2, 3].map((item) => (

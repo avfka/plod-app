@@ -1,4 +1,4 @@
-import { useRouter } from 'expo-router';
+import { useState } from 'react';
 import { Text, View, useColorScheme } from 'react-native';
 import MapView, { Marker, Polyline, PROVIDER_GOOGLE } from 'react-native-maps';
 
@@ -6,6 +6,7 @@ import type { EventWithRelations } from '@/features/events/use-events';
 import { grayscaleMapStyle } from '@/theme/map-style';
 import { Fonts, palette } from '@/theme';
 import type { Tables } from '@/types/database';
+import { MapEventPreview } from './map-event-preview';
 
 // Москва по умолчанию, пока нет геолокации
 const INITIAL_REGION = {
@@ -34,23 +35,25 @@ export function EventMap({
   favoriteChoreographerId?: string | null;
   city?: Tables<'cities'>;
 }) {
-  const router = useRouter();
   const scheme = useColorScheme();
+  const [selected, setSelected] = useState<{ event: EventWithRelations; session: Tables<'event_sessions'> } | null>(null);
 
   return (
-    <MapView
-      key={city?.id ?? 'moscow'}
-      provider={PROVIDER_GOOGLE}
-      style={{ flex: 1 }}
-      initialRegion={city ? {
-        latitude: city.center_lat,
-        longitude: city.center_lng,
-        latitudeDelta: 0.25,
-        longitudeDelta: 0.25,
-      } : INITIAL_REGION}
-      customMapStyle={[...grayscaleMapStyle]}
-      userInterfaceStyle={scheme === 'dark' ? 'dark' : 'light'}
-    >
+    <View className="flex-1 border-x-2 border-b-2 border-accent">
+      <MapView
+        key={city?.id ?? 'moscow'}
+        provider={PROVIDER_GOOGLE}
+        style={{ flex: 1 }}
+        initialRegion={city ? {
+          latitude: city.center_lat,
+          longitude: city.center_lng,
+          latitudeDelta: 0.25,
+          longitudeDelta: 0.25,
+        } : INITIAL_REGION}
+        customMapStyle={[...grayscaleMapStyle]}
+        userInterfaceStyle={scheme === 'dark' ? 'dark' : 'light'}
+        onPress={() => setSelected(null)}
+      >
       {events.map((event) => {
         const sessions = sortedSessions(event);
         const isFavorite =
@@ -70,8 +73,13 @@ export function EventMap({
             {sessions.map((s) => (
               <Marker
                 key={s.id}
+                title={event.title}
+                description={s.address}
                 coordinate={{ latitude: s.lat, longitude: s.lng }}
-                onPress={() => router.push({ pathname: '/event/[id]', params: { id: event.id } })}
+                onPress={(markerEvent) => {
+                  markerEvent.stopPropagation();
+                  setSelected({ event, session: s });
+                }}
                 anchor={{ x: 0.5, y: 0.5 }}
               >
                 <View
@@ -90,6 +98,8 @@ export function EventMap({
           </View>
         );
       })}
-    </MapView>
+      </MapView>
+      {selected ? <MapEventPreview event={selected.event} session={selected.session} onClose={() => setSelected(null)} /> : null}
+    </View>
   );
 }

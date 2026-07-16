@@ -1,4 +1,5 @@
 import { Pressable, ScrollView, Switch, Text, View } from 'react-native';
+import type { ReactNode } from 'react';
 
 import { FilterChip } from '@/components/ui/filter-chip';
 import { useDanceDirections } from '@/features/onboarding/use-directories';
@@ -13,7 +14,7 @@ function todayYmd() {
 }
 
 /** Компактная панель фильтров (карта и список): дата · тип · направление · бесплатные. */
-export function FilterBar({ showHeader = true, inverted = false }: { showHeader?: boolean; inverted?: boolean }) {
+export function FilterBar({ showHeader = true, inverted = false, children }: { showHeader?: boolean; inverted?: boolean; children?: ReactNode }) {
   const filters = useFilters();
   const { data: directions } = useDanceDirections();
   const today = todayYmd();
@@ -96,6 +97,7 @@ export function FilterBar({ showHeader = true, inverted = false }: { showHeader?
           />
         ))}
       </ScrollView>
+      {children}
       <Pressable
         accessibilityRole="switch"
         accessibilityState={{ checked: filters.freeOnly }}

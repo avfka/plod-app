@@ -1,8 +1,11 @@
+import { useState } from 'react';
 import { ActivityIndicator, Text, View } from 'react-native';
 
 import { ScreenMasthead } from '@/components/ui/screen-masthead';
 import { CityContextBar, MOSCOW_CITY_ID } from '@/features/cities/city-context-bar';
-import { applyEventFilters, useActiveEvents } from '@/features/events/use-events';
+import { DiscoveryModeToggle } from '@/features/events/discovery-mode-toggle';
+import { EventSearch } from '@/features/events/event-search';
+import { applyEventFilters, searchEvents, useActiveEvents } from '@/features/events/use-events';
 import { EventMap } from '@/features/map/event-map';
 import { FilterBar } from '@/features/map/filter-bar';
 import { useCities } from '@/features/onboarding/use-directories';
@@ -16,18 +19,33 @@ export default function MapScreen() {
   const filters = useFilters();
   const { data: cities = [] } = useCities();
   const city = cities.find((item) => item.id === (filters.cityId ?? MOSCOW_CITY_ID));
+  const [query, setQuery] = useState('');
+  const [filtersVisible, setFiltersVisible] = useState(true);
 
-  const filtered = applyEventFilters(
+  const filteredByChips = applyEventFilters(
     events ?? [],
     filters,
     profile?.favorite_choreographer_id,
   );
+  const filtered = searchEvents(filteredByChips, query);
+  const activeFilterCount =
+    Number(filters.date !== null) +
+    Number(filters.directionId !== null) +
+    Number(filters.freeOnly) +
+    Number(filters.types.length > 0);
 
   return (
     <View className="flex-1 bg-paper dark:bg-night">
       <ScreenMasthead title="Карта" meta={`${filtered.length} событий`} />
       <CityContextBar />
-      <FilterBar />
+      <EventSearch
+        value={query}
+        filtersVisible={filtersVisible}
+        activeFilterCount={activeFilterCount}
+        onChangeText={setQuery}
+        onToggleFilters={() => setFiltersVisible((visible) => !visible)}
+      />
+      {filtersVisible ? <FilterBar showHeader={false}><DiscoveryModeToggle mode="map" /></FilterBar> : <DiscoveryModeToggle mode="map" />}
       {isPending ? (
         <View className="flex-1 items-center justify-center">
           <ActivityIndicator color={palette.red} />
