@@ -3,7 +3,6 @@ import { ActivityIndicator, Text, View } from 'react-native';
 
 import { ScreenMasthead } from '@/components/ui/screen-masthead';
 import { CityContextBar, MOSCOW_CITY_ID } from '@/features/cities/city-context-bar';
-import { DiscoveryModeToggle } from '@/features/events/discovery-mode-toggle';
 import { EventSearch } from '@/features/events/event-search';
 import { applyEventFilters, searchEvents, useActiveEvents } from '@/features/events/use-events';
 import { EventMap } from '@/features/map/event-map';
@@ -45,7 +44,11 @@ export default function MapScreen() {
         onChangeText={setQuery}
         onToggleFilters={() => setFiltersVisible((visible) => !visible)}
       />
-      {filtersVisible ? <FilterBar showHeader={false}><DiscoveryModeToggle mode="map" /></FilterBar> : <DiscoveryModeToggle mode="map" />}
+      {filtersVisible ? (
+        <FilterBar showHeader={false} />
+      ) : (
+        <View className="h-3 border-b border-ink dark:border-paper-dark" />
+      )}
       {isPending ? (
         <View className="flex-1 items-center justify-center">
           <ActivityIndicator color={palette.red} />

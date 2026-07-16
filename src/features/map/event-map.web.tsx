@@ -106,7 +106,6 @@ export function EventMap({
         });
       });
 
-      map.on('click', () => setSelected(null));
       window.setTimeout(() => map.invalidateSize(), 0);
       cleanup = () => map.remove();
     });

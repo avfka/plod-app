@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Tabs } from 'expo-router';
 import { useEffect, useRef } from 'react';
-import { Platform, type ColorValue } from 'react-native';
+import type { ColorValue } from 'react-native';
 
 import { useProfile } from '@/features/profile/use-profile';
 import { getPreferredCityId } from '@/features/cities/city-preference';
@@ -70,8 +70,7 @@ export default function TabsLayout() {
         name="map"
         options={{
           title: 'Карта',
-          tabBarIcon: tabIcon('scan-outline'),
-          href: Platform.OS === 'web' ? null : '/map',
+          tabBarIcon: tabIcon('map-outline'),
         }}
       />
       <Tabs.Screen

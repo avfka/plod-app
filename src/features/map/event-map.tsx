@@ -52,7 +52,6 @@ export function EventMap({
         } : INITIAL_REGION}
         customMapStyle={[...grayscaleMapStyle]}
         userInterfaceStyle={scheme === 'dark' ? 'dark' : 'light'}
-        onPress={() => setSelected(null)}
       >
       {events.map((event) => {
         const sessions = sortedSessions(event);
