@@ -21,6 +21,7 @@ export function applyEventFilters(
   favoriteChoreographerId?: string | null,
 ): EventWithRelations[] {
   const filtered = events.filter((event) => {
+    if (filters.cityId && !event.event_sessions.some((session) => session.city_id === filters.cityId)) return false;
     if (filters.types.length > 0 && !filters.types.includes(event.event_type)) return false;
     if (filters.freeOnly && !event.is_free) return false;
     if (filters.directionId && event.direction_id !== filters.directionId) return false;

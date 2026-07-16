@@ -5,6 +5,7 @@ import MapView, { Marker, Polyline, PROVIDER_GOOGLE } from 'react-native-maps';
 import type { EventWithRelations } from '@/features/events/use-events';
 import { grayscaleMapStyle } from '@/theme/map-style';
 import { Fonts, palette } from '@/theme';
+import type { Tables } from '@/types/database';
 
 // Москва по умолчанию, пока нет геолокации
 const INITIAL_REGION = {
@@ -27,18 +28,26 @@ function sortedSessions(e: EventWithRelations) {
 export function EventMap({
   events,
   favoriteChoreographerId,
+  city,
 }: {
   events: EventWithRelations[];
   favoriteChoreographerId?: string | null;
+  city?: Tables<'cities'>;
 }) {
   const router = useRouter();
   const scheme = useColorScheme();
 
   return (
     <MapView
+      key={city?.id ?? 'moscow'}
       provider={PROVIDER_GOOGLE}
       style={{ flex: 1 }}
-      initialRegion={INITIAL_REGION}
+      initialRegion={city ? {
+        latitude: city.center_lat,
+        longitude: city.center_lng,
+        latitudeDelta: 0.25,
+        longitudeDelta: 0.25,
+      } : INITIAL_REGION}
       customMapStyle={[...grayscaleMapStyle]}
       userInterfaceStyle={scheme === 'dark' ? 'dark' : 'light'}
     >

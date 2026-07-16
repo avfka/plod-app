@@ -38,6 +38,7 @@ function event(
 }
 
 const filters: EventFilters = {
+  cityId: null,
   date: null,
   types: [],
   directionId: null,
@@ -73,6 +74,11 @@ describe('event discovery', () => {
         { ...filters, types: ['championship'], freeOnly: true },
       ).map(({ id }) => id),
     ).toEqual(['event-2']);
+  });
+
+  it('limits discovery to the selected city', () => {
+    expect(applyEventFilters([hiphop], { ...filters, cityId: 'city-1' })).toHaveLength(1);
+    expect(applyEventFilters([hiphop], { ...filters, cityId: 'city-2' })).toHaveLength(0);
   });
 
   it('prioritizes the favorite choreographer', () => {

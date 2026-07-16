@@ -14,12 +14,14 @@ import {
   uploadEventPhoto,
   useCreateEvent,
 } from '@/features/events/use-managed-events';
-import { useChoreographers, useDanceDirections } from '@/features/onboarding/use-directories';
+import { useChoreographers, useCities, useDanceDirections } from '@/features/onboarding/use-directories';
+import { MOSCOW_CITY_ID } from '@/features/cities/city-context-bar';
 import { Fonts, palette } from '@/theme';
 import type { Database } from '@/types/database';
 
 type EventType = Database['public']['Enums']['event_type'];
 type DraftSessionInput = {
+  cityId: string;
   date: string;
   start: string;
   end: string;
@@ -31,6 +33,7 @@ type DraftSessionInput = {
 const tomorrow = new Date(Date.now() + 24 * 60 * 60 * 1000);
 const DEFAULT_DATE = tomorrow.toISOString().slice(0, 10);
 const NEW_SESSION: DraftSessionInput = {
+  cityId: MOSCOW_CITY_ID,
   date: DEFAULT_DATE,
   start: '19:00',
   end: '21:00',
@@ -50,6 +53,7 @@ export default function CreateEventScreen() {
   const { session } = useSession();
   const { data: directions = [] } = useDanceDirections();
   const { data: choreographers = [] } = useChoreographers();
+  const { data: cities = [] } = useCities();
   const createEvent = useCreateEvent();
   const [step, setStep] = useState(1);
   const [title, setTitle] = useState('');
@@ -100,6 +104,7 @@ export default function CreateEventScreen() {
       let photoUrl: string | null = null;
       if (photo) photoUrl = await uploadEventPhoto(session.user.id, photo.uri, photo.mimeType);
       const sessionPayload: SessionDraft[] = sessions.map((item, index) => ({
+        city_id: item.cityId,
         day_number: index + 1,
         starts_at: toIso(item.date, item.start),
         ends_at: item.end ? toIso(item.date, item.end) : null,
@@ -192,6 +197,18 @@ export default function CreateEventScreen() {
             {sessions.map((item, index) => (
               <Card key={`session-${index}`} className="gap-3">
                 <View className="flex-row items-center justify-between"><Tag label={`Улика ${index + 1}`} /><View className="h-2 w-2 rounded-full bg-accent" /></View>
+                <Text style={{ fontFamily: Fonts.mono }} className="text-[11px] font-bold uppercase text-ink dark:text-paper-dark">Город *</Text>
+                <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerClassName="gap-2">
+                  {cities.map((city) => (
+                    <Pressable
+                      key={city.id}
+                      onPress={() => updateSession(index, { cityId: city.id, lat: String(city.center_lat), lng: String(city.center_lng) })}
+                      className={`border px-3 py-2 ${item.cityId === city.id ? 'border-accent bg-[#FCE8E5]' : 'border-[#BDB5AA] dark:border-[#4A443D]'}`}
+                    >
+                      <Text className={`text-sm ${item.cityId === city.id ? 'text-accent' : 'text-ink dark:text-paper-dark'}`}>{city.name}</Text>
+                    </Pressable>
+                  ))}
+                </ScrollView>
                 <View className="flex-row gap-2"><View className="flex-1"><FormField label="Дата *" value={item.date} onChangeText={(date) => updateSession(index, { date })} placeholder="2026-07-20" /></View><View className="w-24"><FormField label="Начало *" value={item.start} onChangeText={(start) => updateSession(index, { start })} placeholder="19:00" /></View><View className="w-24"><FormField label="Конец" value={item.end} onChangeText={(end) => updateSession(index, { end })} placeholder="21:00" /></View></View>
                 <FormField label="Адрес *" value={item.address} onChangeText={(address) => updateSession(index, { address })} placeholder="Студия и улица" />
                 <View className="flex-row gap-2"><View className="flex-1"><FormField label="Широта" value={item.lat} onChangeText={(lat) => updateSession(index, { lat })} keyboardType="decimal-pad" /></View><View className="flex-1"><FormField label="Долгота" value={item.lng} onChangeText={(lng) => updateSession(index, { lng })} keyboardType="decimal-pad" /></View></View>

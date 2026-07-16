@@ -3,6 +3,7 @@ import { FlatList, Text, View } from 'react-native';
 
 import { Button } from '@/components/ui/button';
 import { ScreenMasthead } from '@/components/ui/screen-masthead';
+import { CityContextBar } from '@/features/cities/city-context-bar';
 import { EventSearch } from '@/features/events/event-search';
 import { applyEventFilters, searchEvents, useActiveEvents } from '@/features/events/use-events';
 import { EventCard } from '@/features/events/event-card';
@@ -41,6 +42,7 @@ export default function ListScreen() {
   return (
     <View className="flex-1 bg-night">
       <ScreenMasthead title="События" meta={`${filtered.length} найдено`} />
+      <CityContextBar inverted />
       <EventSearch
         value={query}
         filtersVisible={filtersVisible}
