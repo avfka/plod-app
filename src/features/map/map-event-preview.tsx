@@ -13,7 +13,10 @@ function formatDate(iso: string) {
 export function MapEventPreview({ event, session, onClose }: { event: EventWithRelations; session: Tables<'event_sessions'>; onClose: () => void }) {
   const router = useRouter();
   return (
-    <View className="absolute bottom-4 left-[18px] right-[18px] border border-ink border-t-4 border-t-accent bg-paper p-4 dark:border-paper-dark dark:bg-night-element">
+    <View
+      style={{ zIndex: 20, elevation: 20 }}
+      className="absolute bottom-4 left-[18px] right-[18px] border border-ink border-t-4 border-t-accent bg-paper p-4 dark:border-paper-dark dark:bg-night-element"
+    >
       <Pressable accessibilityRole="button" accessibilityLabel="Закрыть досье" onPress={onClose} className="absolute right-2 top-2 z-10 h-10 w-10 items-end">
         <Ionicons name="close" size={22} color={palette.red} />
       </Pressable>
