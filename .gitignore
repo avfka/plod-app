@@ -44,3 +44,6 @@ example
 
 # local design research artifacts
 .lazyweb/
+
+# local Vercel project link
+.vercel/
