@@ -61,11 +61,12 @@ function BookingItem({ booking }: { booking: BookingWithEvent }) {
 
   return (
     <View className="gap-2">
-      <EventCard event={booking.event} sessionId={booking.session_id} />
+      <EventCard event={booking.event} sessionId={booking.session_id} inverted />
       {canCancel ? (
         <Button
           label="Отменить запись"
           variant="ghost"
+          inverted
           loading={cancel.isPending}
           onPress={onCancel}
         />
@@ -82,7 +83,7 @@ export default function BookingsScreen() {
 
   if (sessionLoading || (!isGuest && isPending)) {
     return (
-      <View className="flex-1 items-center justify-center bg-paper dark:bg-night">
+      <View className="flex-1 items-center justify-center bg-night">
         <ActivityIndicator color={palette.red} />
       </View>
     );
@@ -90,19 +91,19 @@ export default function BookingsScreen() {
 
   if (isGuest) {
     return (
-      <View className="flex-1 justify-center gap-4 bg-paper px-6 dark:bg-night">
-        <Card className="gap-3">
+      <View className="flex-1 justify-center gap-4 bg-night px-6">
+        <Card inverted className="gap-3">
           <Tag label="Личное дело" />
           <Text
             style={{ fontFamily: Fonts.mono }}
-            className="text-lg font-bold uppercase text-ink dark:text-paper-dark"
+            className="text-lg font-bold uppercase text-paper-dark"
           >
             Ваши записи появятся здесь
           </Text>
-          <Text style={{ fontFamily: Fonts.mono }} className="text-xs leading-5 text-[#6B6560]">
+          <Text style={{ fontFamily: Fonts.mono }} className="text-xs leading-5 text-[#A39D93]">
             Войдите, чтобы сохранять события и управлять своими местами.
           </Text>
-          <Button label="Войти" onPress={() => router.push('/(auth)/welcome')} />
+          <Button inverted label="Войти" onPress={() => router.push('/(auth)/welcome')} />
         </Card>
       </View>
     );
@@ -110,11 +111,11 @@ export default function BookingsScreen() {
 
   if (error) {
     return (
-      <View className="flex-1 justify-center gap-3 bg-paper px-6 dark:bg-night">
+      <View className="flex-1 justify-center gap-3 bg-night px-6">
         <Text style={{ fontFamily: Fonts.mono }} className="text-center text-sm text-accent">
           Не удалось загрузить записи
         </Text>
-        <Button label="Повторить" variant="outline" onPress={() => refetch()} />
+        <Button inverted label="Повторить" variant="outline" onPress={() => refetch()} />
       </View>
     );
   }
@@ -129,7 +130,7 @@ export default function BookingsScreen() {
 
   return (
     <ScrollView
-      className="flex-1 bg-paper dark:bg-night"
+      className="flex-1 bg-night"
       contentContainerClassName="gap-6 p-4 pb-28"
       refreshControl={<RefreshControl refreshing={isRefetching} onRefresh={refetch} />}
     >
@@ -139,19 +140,20 @@ export default function BookingsScreen() {
         </Text>
         <Text
           style={{ fontFamily: Fonts.mono }}
-          className="text-2xl font-bold uppercase text-ink dark:text-paper-dark"
+          className="text-2xl font-bold uppercase text-paper-dark"
         >
           Мои записи
         </Text>
       </View>
 
       {upcoming.length === 0 && history.length === 0 ? (
-        <Card className="gap-3">
+        <Card inverted className="gap-3">
           <Tag label="Новых дел нет" />
-          <Text style={{ fontFamily: Fonts.mono }} className="text-xs leading-5 text-[#6B6560]">
+          <Text style={{ fontFamily: Fonts.mono }} className="text-xs leading-5 text-[#A39D93]">
             Найдите событие на карте и нажмите «Записаться» в его досье.
           </Text>
           <Button
+            inverted
             label={Platform.OS === 'web' ? 'Найти событие' : 'Открыть карту'}
             onPress={() =>
               router.push(Platform.OS === 'web' ? '/(tabs)/list' : '/(tabs)/map')

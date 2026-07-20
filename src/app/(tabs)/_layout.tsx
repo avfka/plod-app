@@ -5,9 +5,8 @@ import type { ColorValue } from 'react-native';
 
 import { useProfile } from '@/features/profile/use-profile';
 import { getPreferredCityId } from '@/features/cities/city-preference';
-import { useTheme } from '@/hooks/use-theme';
 import { useFilters } from '@/store/filters';
-import { Fonts, palette } from '@/theme';
+import { Fonts } from '@/theme';
 
 type IoniconName = keyof typeof Ionicons.glyphMap;
 
@@ -19,7 +18,6 @@ function tabIcon(name: IoniconName) {
 }
 
 export default function TabsLayout() {
-  const theme = useTheme();
   const { data: profile } = useProfile();
   const applyProfileDefaults = useFilters((s) => s.applyProfileDefaults);
   const defaultsApplied = useRef(false);
@@ -43,49 +41,48 @@ export default function TabsLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: theme.tabIconSelected,
-        tabBarInactiveTintColor: theme.tabIconDefault,
+        tabBarActiveTintColor: '#F5F1E8',
+        tabBarInactiveTintColor: '#77716A',
         tabBarStyle: {
-          backgroundColor: theme.background,
-          borderTopColor: palette.red,
-          borderTopWidth: 2,
+          backgroundColor: '#12100E',
+          borderTopColor: '#282420',
+          borderTopWidth: 1,
           height: 72,
           paddingBottom: 8,
           paddingTop: 8,
         },
         tabBarLabelStyle: { fontFamily: Fonts.sans, fontSize: 10, fontWeight: '600' },
         headerShown: false,
-        headerStyle: { backgroundColor: theme.background },
-        headerTintColor: theme.text,
+        headerStyle: { backgroundColor: '#12100E' },
+        headerTintColor: '#F5F1E8',
         headerTitleStyle: {
           fontFamily: Fonts.mono,
           fontWeight: 'bold',
           letterSpacing: 2,
           textTransform: 'uppercase',
         },
-        sceneStyle: { backgroundColor: theme.background },
+        sceneStyle: { backgroundColor: '#12100E' },
       }}
     >
+      <Tabs.Screen
+        name="list"
+        options={{
+          title: 'Лента',
+          tabBarIcon: tabIcon('play-circle-outline'),
+        }}
+      />
+      <Tabs.Screen
+        name="subscriptions"
+        options={{
+          title: 'Подписки',
+          tabBarIcon: tabIcon('people-outline'),
+        }}
+      />
       <Tabs.Screen
         name="map"
         options={{
           title: 'Карта',
           tabBarIcon: tabIcon('map-outline'),
-        }}
-      />
-      <Tabs.Screen
-        name="list"
-        options={{
-          title: 'События',
-          tabBarIcon: tabIcon('albums-outline'),
-          tabBarStyle: {
-            backgroundColor: '#12100E',
-            borderTopColor: palette.red,
-            borderTopWidth: 2,
-            height: 72,
-            paddingBottom: 8,
-            paddingTop: 8,
-          },
         }}
       />
       <Tabs.Screen
@@ -98,7 +95,7 @@ export default function TabsLayout() {
       />
       <Tabs.Screen
         name="bookings"
-        options={{ title: 'Мои записи', tabBarIcon: tabIcon('calendar-outline') }}
+        options={{ title: 'Мои записи', tabBarIcon: tabIcon('calendar-outline'), href: null }}
       />
       <Tabs.Screen
         name="profile"

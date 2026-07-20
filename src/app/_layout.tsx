@@ -6,13 +6,10 @@ import { StatusBar } from 'expo-status-bar';
 import { useState } from 'react';
 
 import { useNativeAuthLink } from '@/features/auth/native-auth-link';
-import { useTheme, useThemeName } from '@/hooks/use-theme';
 import { Fonts } from '@/theme';
 
 export default function RootLayout() {
   useNativeAuthLink();
-  const theme = useTheme();
-  const themeName = useThemeName();
   const [queryClient] = useState(
     () =>
       new QueryClient({
@@ -24,19 +21,21 @@ export default function RootLayout() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <StatusBar style={themeName === 'dark' ? 'light' : 'dark'} />
+      <StatusBar style="light" />
       <Stack
         screenOptions={{
-          headerStyle: { backgroundColor: theme.background },
-          headerTintColor: theme.text,
+          headerStyle: { backgroundColor: '#12100E' },
+          headerTintColor: '#F5F1E8',
           headerTitleStyle: { fontFamily: Fonts.mono, fontWeight: 'bold' },
-          contentStyle: { backgroundColor: theme.background },
+          contentStyle: { backgroundColor: '#12100E' },
         }}
       >
+        <Stack.Screen name="index" options={{ headerShown: false, title: 'PLOD' }} />
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="(auth)" options={{ headerShown: false }} />
         <Stack.Screen name="(onboarding)" options={{ headerShown: false }} />
         <Stack.Screen name="event/[id]" options={{ title: 'Pass Card' }} />
+        <Stack.Screen name="choreographer/[id]" options={{ title: 'Хореограф' }} />
       </Stack>
     </QueryClientProvider>
   );

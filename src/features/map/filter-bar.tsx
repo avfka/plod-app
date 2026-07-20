@@ -20,15 +20,15 @@ export function FilterBar({ showHeader = true, inverted = false, children }: { s
   const today = todayYmd();
   const activeCount =
     Number(filters.date !== null) +
-    Number(filters.directionId !== null) +
+    filters.directionIds.length +
     Number(filters.freeOnly) +
-    Number(filters.types.length > 0);
+    filters.types.length;
 
   const reset = () =>
     filters.set({
       date: null,
       types: [],
-      directionId: null,
+      directionIds: [],
       choreographerId: null,
       freeOnly: false,
     });
@@ -39,8 +39,15 @@ export function FilterBar({ showHeader = true, inverted = false, children }: { s
     filters.set({ types: next });
   };
 
+  const toggleDirection = (directionId: string) => {
+    const next = filters.directionIds.includes(directionId)
+      ? filters.directionIds.filter((id) => id !== directionId)
+      : [...filters.directionIds, directionId];
+    filters.set({ directionIds: next });
+  };
+
   return (
-    <View className={`gap-2.5 border-b py-3 ${inverted ? 'border-paper-dark bg-night' : 'border-ink bg-paper dark:border-paper-dark dark:bg-night'}`}>
+    <View className={`gap-2.5 border-b py-3 ${inverted ? 'border-[#39342E] bg-night' : 'border-ink bg-paper dark:border-paper-dark dark:bg-night'}`}>
       {showHeader ? <View className="flex-row items-center justify-between px-3">
         <Text
           style={{ fontFamily: Fonts.sans }}
@@ -89,11 +96,9 @@ export function FilterBar({ showHeader = true, inverted = false, children }: { s
             key={d.id}
             label={d.name}
             dotColor={d.color_hex}
-            selected={filters.directionId === d.id}
+            selected={filters.directionIds.includes(d.id)}
             inverted={inverted}
-            onPress={() =>
-              filters.set({ directionId: filters.directionId === d.id ? null : d.id })
-            }
+            onPress={() => toggleDirection(d.id)}
           />
         ))}
       </ScrollView>
@@ -103,7 +108,7 @@ export function FilterBar({ showHeader = true, inverted = false, children }: { s
         accessibilityState={{ checked: filters.freeOnly }}
         accessibilityLabel="Показывать только бесплатные события"
         onPress={() => filters.set({ freeOnly: !filters.freeOnly })}
-        className={`mx-[18px] min-h-11 flex-row items-center justify-between border-t border-dashed pt-2 active:opacity-70 ${inverted ? 'border-[#39342E]' : 'border-[#D8D2C6] dark:border-[#39342E]'}`}
+        className={`mx-[18px] min-h-11 flex-row items-center justify-between border-t border-dashed pt-2 active:opacity-70 ${inverted ? 'border-[#4A443D]' : 'border-[#D8D2C6] dark:border-[#39342E]'}`}
       >
         <Text
           style={{ fontFamily: Fonts.sans }}

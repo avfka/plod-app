@@ -41,7 +41,7 @@ const filters: EventFilters = {
   cityId: null,
   date: null,
   types: [],
-  directionId: null,
+  directionIds: [],
   choreographerId: null,
   freeOnly: false,
 };
@@ -74,6 +74,21 @@ describe('event discovery', () => {
         { ...filters, types: ['championship'], freeOnly: true },
       ).map(({ id }) => id),
     ).toEqual(['event-2']);
+  });
+
+  it('matches any selected dance direction', () => {
+    const salsa = event({
+      id: 'event-3',
+      title: 'Сальса-практика',
+      direction_id: 'direction-2',
+    });
+
+    expect(
+      applyEventFilters(
+        [hiphop, salsa, freeChampionship],
+        { ...filters, directionIds: ['direction-1', 'direction-2'] },
+      ).map(({ id }) => id),
+    ).toEqual(['event-1', 'event-3']);
   });
 
   it('limits discovery to the selected city', () => {

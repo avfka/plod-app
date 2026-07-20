@@ -1,13 +1,14 @@
 import { Image } from 'expo-image';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { useState } from 'react';
-import { ActivityIndicator, Alert, ScrollView, Text, View } from 'react-native';
+import { ActivityIndicator, Alert, Pressable, ScrollView, Text, View } from 'react-native';
 
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { DossierRow, Tag } from '@/components/ui/tag';
 import { useSession } from '@/features/auth/use-session';
 import { useBookingActions, useEventBooking } from '@/features/bookings/use-bookings';
+import { reportProblem } from '@/features/feedback/report-problem';
 import { bookingDate, RedThreadTimeline } from '@/features/events/red-thread-timeline';
 import { useEvent } from '@/features/events/use-events';
 import { useProfile } from '@/features/profile/use-profile';
@@ -27,14 +28,14 @@ export default function EventScreen() {
 
   if (isPending) {
     return (
-      <View className="flex-1 items-center justify-center bg-paper dark:bg-night">
+      <View className="flex-1 items-center justify-center bg-night">
         <ActivityIndicator color={palette.red} />
       </View>
     );
   }
   if (error || !event) {
     return (
-      <View className="flex-1 items-center justify-center bg-paper px-8 dark:bg-night">
+      <View className="flex-1 items-center justify-center bg-night px-8">
         <Text style={{ fontFamily: Fonts.mono }} className="text-xs text-accent">
           Событие не найдено
         </Text>
@@ -104,14 +105,14 @@ export default function EventScreen() {
       <Stack.Screen
         options={{
           title: 'Pass Card',
-          headerStyle: { backgroundColor: palette.paper },
-          headerTintColor: palette.ink,
+          headerStyle: { backgroundColor: '#12100E' },
+          headerTintColor: '#F5F1E8',
           headerTitleStyle: { fontFamily: Fonts.mono },
           headerShadowVisible: true,
         }}
       />
-      <ScrollView className="flex-1 bg-paper dark:bg-night" contentContainerClassName="items-center p-4">
-        <Card className="w-full max-w-6xl overflow-hidden p-0">
+      <ScrollView className="flex-1 bg-night" contentContainerClassName="items-center p-4">
+        <Card inverted className="w-full max-w-6xl overflow-hidden p-0">
           {event.photo_url ? (
             <View className="p-3 pb-0">
               <Image source={{ uri: event.photo_url }} style={{ height: 148 }} contentFit="cover" />
@@ -132,20 +133,20 @@ export default function EventScreen() {
             </View>
             <Text
               style={{ fontFamily: Fonts.serif, letterSpacing: 1 }}
-              className="text-2xl font-bold uppercase text-ink dark:text-paper-dark"
+              className="text-2xl font-bold uppercase text-paper-dark"
             >
               {event.title}
             </Text>
             {event.description ? (
               <Text
                 style={{ fontFamily: Fonts.mono }}
-                className="text-xs leading-5 text-[#6B6560] dark:text-[#A39D93]"
+                className="text-xs leading-5 text-[#A39D93]"
               >
                 {event.description}
               </Text>
             ) : null}
           </View>
-          <View className="gap-5 border-t border-ink p-5 dark:border-paper-dark md:flex-row md:items-stretch">
+          <View className="gap-5 border-t border-paper-dark p-5 md:flex-row md:items-stretch">
             <View className="md:w-[42%]">
               {selectedSession ? (
                 <RedThreadTimeline
@@ -153,18 +154,31 @@ export default function EventScreen() {
                   selectedId={selectedSession.id}
                   seatsLeft={seatsLeft}
                   onSelect={setSelectedSessionId}
+                  inverted
                 />
               ) : null}
             </View>
 
-            <Card className="flex-1 justify-between gap-4">
+            <Card inverted className="flex-1 justify-between gap-4">
               <View>
                 <Tag label="Данные" color="#141210" />
                 <View className="mt-3">
                   {event.choreographer ? (
-                    <DossierRow label="Хореограф" value={event.choreographer.name} />
+                    <Pressable
+                      accessibilityRole="link"
+                      accessibilityLabel={`Открыть профиль ${event.choreographer.name}`}
+                      onPress={() =>
+                        router.push({
+                          pathname: '/choreographer/[id]',
+                          params: { id: event.choreographer!.id },
+                        })
+                      }
+                    >
+                      <DossierRow inverted label="Хореограф" value={`${event.choreographer.name} →`} />
+                    </Pressable>
                   ) : null}
                   <DossierRow
+                    inverted
                     label="Цена"
                     value={
                       event.is_free
@@ -175,13 +189,13 @@ export default function EventScreen() {
                     }
                   />
                   {seatsLeft != null ? (
-                    <DossierRow label="Мест" value={`Осталось ${seatsLeft}`} />
+                    <DossierRow inverted label="Мест" value={`Осталось ${seatsLeft}`} />
                   ) : null}
                   {event.age_restriction ? (
-                    <DossierRow label="Возраст" value={event.age_restriction} />
+                    <DossierRow inverted label="Возраст" value={event.age_restriction} />
                   ) : null}
                   {event.contact_phone ? (
-                    <DossierRow label="Контакт" value={event.contact_phone} />
+                    <DossierRow inverted label="Контакт" value={event.contact_phone} />
                   ) : null}
                 </View>
               </View>
@@ -193,13 +207,14 @@ export default function EventScreen() {
                     <Button
                       label="Отменить запись"
                       variant="outline"
+                      inverted
                       loading={cancel.isPending}
                       onPress={onCancel}
                     />
                   ) : !isAttended ? (
                     <Text
                       style={{ fontFamily: Fonts.mono }}
-                      className="text-xs leading-5 text-[#6B6560] dark:text-[#A39D93]"
+                      className="text-xs leading-5 text-[#A39D93]"
                     >
                       Отмена закрывается за 24 часа до начала.
                     </Text>
@@ -207,6 +222,7 @@ export default function EventScreen() {
                 </View>
               ) : (
                 <Button
+                  inverted
                   label={
                     !hasUpcomingSession
                       ? 'Событие завершено'
@@ -222,6 +238,12 @@ export default function EventScreen() {
                   onPress={onBook}
                 />
               )}
+              <Button
+                inverted
+                label="Сообщить о проблеме"
+                variant="ghost"
+                onPress={() => reportProblem({ route: `/event/${id}`, eventId: id })}
+              />
             </Card>
           </View>
         </Card>

@@ -30,16 +30,25 @@ export function EventMap({
   events,
   favoriteChoreographerId,
   city,
+  autoSelectFirst: _autoSelectFirst = false,
+  compact = false,
+  visibleEventIds,
 }: {
   events: EventWithRelations[];
   favoriteChoreographerId?: string | null;
   city?: Tables<'cities'>;
+  autoSelectFirst?: boolean;
+  compact?: boolean;
+  visibleEventIds?: string[];
 }) {
   const scheme = useColorScheme();
   const [selected, setSelected] = useState<{ event: EventWithRelations; session: Tables<'event_sessions'> } | null>(null);
+  const visibleEvents = visibleEventIds
+    ? events.filter((event) => visibleEventIds.includes(event.id))
+    : events;
 
   return (
-    <View className="flex-1 border-x-2 border-b-2 border-accent">
+    <View className={`flex-1 border-y border-[#39342E] ${compact ? 'bg-night' : ''}`}>
       <MapView
         key={city?.id ?? 'moscow'}
         provider={PROVIDER_GOOGLE}
@@ -53,7 +62,7 @@ export function EventMap({
         customMapStyle={[...grayscaleMapStyle]}
         userInterfaceStyle={scheme === 'dark' ? 'dark' : 'light'}
       >
-      {events.map((event) => {
+      {visibleEvents.map((event) => {
         const sessions = sortedSessions(event);
         const isFavorite =
           !!favoriteChoreographerId && event.choreographer_id === favoriteChoreographerId;

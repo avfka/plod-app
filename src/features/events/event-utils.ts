@@ -24,7 +24,10 @@ export function applyEventFilters(
     if (filters.cityId && !event.event_sessions.some((session) => session.city_id === filters.cityId)) return false;
     if (filters.types.length > 0 && !filters.types.includes(event.event_type)) return false;
     if (filters.freeOnly && !event.is_free) return false;
-    if (filters.directionId && event.direction_id !== filters.directionId) return false;
+    if (
+      filters.directionIds.length > 0 &&
+      (!event.direction_id || !filters.directionIds.includes(event.direction_id))
+    ) return false;
     if (filters.choreographerId && event.choreographer_id !== filters.choreographerId) return false;
     if (
       filters.date &&

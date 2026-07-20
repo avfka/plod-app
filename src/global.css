@@ -14,7 +14,11 @@
 }
 
 .plod-leaflet-map .leaflet-tile-pane {
-  filter: grayscale(1) contrast(0.9) brightness(1.05);
+  filter: grayscale(1) contrast(1.05) brightness(0.34);
+}
+
+.plod-map-has-selection .plod-session-path {
+  opacity: 0.12;
 }
 
 .plod-map-marker-shell {
@@ -36,4 +40,81 @@
   font-size: 12px;
   font-weight: 800;
   line-height: 1;
+}
+
+.plod-map-marker-selected {
+  border-color: #ff1f0f;
+  box-shadow: 0 0 0 5px rgb(250 247 242 / 92%), 0 0 0 8px #ff1f0f;
+  transform: scale(0.58);
+}
+
+.plod-map-marker-related:not(.plod-map-marker-selected) {
+  border-color: #ff1f0f;
+  box-shadow: 0 0 0 3px rgb(255 31 15 / 42%);
+}
+
+.plod-map-selection-desktop {
+  --plod-trinity-card: clamp(104px, 24vw, 252px);
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  z-index: 500;
+  display: none;
+}
+
+.plod-map-selection-desktop > * {
+  pointer-events: auto;
+}
+
+.plod-map-poster-card {
+  position: absolute;
+  top: 50%;
+  right: 12px;
+  width: var(--plod-trinity-card);
+  height: min(310px, calc(100% - 24px));
+  transform: translateY(-50%);
+  overflow: hidden;
+  border: 1px solid #f5f1e8;
+  background: #12100e;
+  box-shadow: none;
+}
+
+.plod-map-callout-line {
+  pointer-events: none !important;
+  position: absolute;
+  z-index: 510;
+  height: 2px;
+  border-radius: 9999px;
+  background: #ff1f0f;
+  opacity: 0;
+  transform-origin: 0 50%;
+  will-change: left, top, width, transform;
+}
+
+.plod-related-event-path {
+  stroke-linecap: round;
+}
+
+.plod-map-dossier {
+  position: absolute;
+  top: 50%;
+  left: 12px;
+  z-index: 520;
+  width: var(--plod-trinity-card);
+  height: min(310px, calc(100% - 24px));
+  transform: translateY(-50%);
+}
+
+.plod-map-selection-mobile {
+  display: contents;
+}
+
+@media (min-width: 390px) {
+  .plod-map-selection-desktop {
+    display: flex;
+  }
+
+  .plod-map-selection-mobile {
+    display: none;
+  }
 }

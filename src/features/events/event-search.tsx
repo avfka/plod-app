@@ -17,16 +17,16 @@ export function EventSearch({
   onToggleFilters: () => void;
 }) {
   return (
-    <View className="flex-row gap-2.5 bg-night px-[18px] pt-3">
-      <View className="h-14 min-w-0 flex-1 flex-row items-center rounded-[6px] border border-[#A39D93] px-3 dark:border-[#A39D93]">
-        <Ionicons name="search-outline" size={25} color="#A39D93" />
-        <View className="mx-3 h-8 w-[2px] bg-accent" />
+    <View className="flex-row gap-2.5 border-b border-[#39342E] bg-night px-[18px] py-3">
+      <View className="h-12 min-w-0 flex-1 flex-row items-center rounded-[2px] border border-paper-dark px-3">
+        <Ionicons name="search-outline" size={22} color="#F5F1E8" />
+        <View className="mx-3 h-7 w-[2px] bg-accent" />
         <TextInput
           accessibilityLabel="Поиск событий"
           value={value}
           onChangeText={onChangeText}
           placeholder="Стиль, хореограф, площадка"
-          placeholderTextColor="#8A847C"
+          placeholderTextColor="#A39D93"
           returnKeyType="search"
           clearButtonMode="while-editing"
           style={{ fontFamily: Fonts.mono }}
@@ -39,16 +39,12 @@ export function EventSearch({
         accessibilityLabel={`Фильтры${activeFilterCount > 0 ? `, выбрано ${activeFilterCount}` : ''}`}
         accessibilityState={{ expanded: filtersVisible }}
         onPress={onToggleFilters}
-        className={`h-14 w-[84px] flex-row items-center justify-center gap-1.5 rounded-[2px] border active:opacity-70 ${
-          filtersVisible
-            ? 'border-paper-dark'
-            : 'border-[#A39D93]'
-        }`}
+        className="relative h-12 w-[94px] flex-row items-center justify-center gap-1.5 rounded-[2px] border border-paper-dark bg-night active:opacity-70"
       >
-        <Ionicons name="options-outline" size={23} color="#A39D93" />
+        <Ionicons name="options-outline" size={21} color="#F5F1E8" />
         <Text
           style={{ fontFamily: Fonts.mono }}
-          className="text-[11px] font-bold text-paper-dark"
+          className="text-[11px] font-bold uppercase text-paper-dark"
         >
           Фильтры
         </Text>

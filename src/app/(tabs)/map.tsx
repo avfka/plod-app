@@ -29,14 +29,14 @@ export default function MapScreen() {
   const filtered = searchEvents(filteredByChips, query);
   const activeFilterCount =
     Number(filters.date !== null) +
-    Number(filters.directionId !== null) +
+    filters.directionIds.length +
     Number(filters.freeOnly) +
-    Number(filters.types.length > 0);
+    filters.types.length;
 
   return (
-    <View className="flex-1 bg-paper dark:bg-night">
+    <View className="flex-1 bg-night">
       <ScreenMasthead title="Карта" meta={`${filtered.length} событий`} />
-      <CityContextBar />
+      <CityContextBar inverted />
       <EventSearch
         value={query}
         filtersVisible={filtersVisible}
@@ -45,9 +45,9 @@ export default function MapScreen() {
         onToggleFilters={() => setFiltersVisible((visible) => !visible)}
       />
       {filtersVisible ? (
-        <FilterBar showHeader={false} />
+        <FilterBar showHeader={false} inverted />
       ) : (
-        <View className="h-3 border-b border-ink dark:border-paper-dark" />
+        <View className="h-3 border-b border-[#39342E] bg-night" />
       )}
       {isPending ? (
         <View className="flex-1 items-center justify-center">
@@ -61,7 +61,8 @@ export default function MapScreen() {
         </View>
       ) : (
         <EventMap
-          events={filtered}
+          events={events ?? []}
+          visibleEventIds={filtered.map((event) => event.id)}
           favoriteChoreographerId={profile?.favorite_choreographer_id}
           city={city}
         />

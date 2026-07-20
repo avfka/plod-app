@@ -30,11 +30,13 @@ export function RedThreadTimeline({
   selectedId,
   seatsLeft,
   onSelect,
+  inverted = false,
 }: {
   sessions: Session[];
   selectedId: string;
   seatsLeft: number | null;
   onSelect: (id: string) => void;
+  inverted?: boolean;
 }) {
   const now = useNow();
   const nextId = sessions.find(
@@ -52,7 +54,9 @@ export function RedThreadTimeline({
               {index > 0 ? <View className="h-4 w-[2px] bg-thread" /> : <View className="h-4" />}
               <View
                 style={{ borderColor: selected ? palette.red : palette.ink }}
-                className="z-10 h-6 w-6 items-center justify-center rounded-full border bg-paper dark:bg-night-element"
+                className={`z-10 h-6 w-6 items-center justify-center rounded-full border ${
+                  inverted ? 'bg-night-element' : 'bg-paper dark:bg-night-element'
+                }`}
               >
                 {selected ? <View className="h-3 w-3 rounded-full bg-accent" /> : null}
               </View>
@@ -70,7 +74,11 @@ export function RedThreadTimeline({
               } ${upcoming ? '' : 'opacity-40'}`}
             >
               {session.id === nextId ? (
-                <View className="absolute -top-3 left-[-8px] rotate-[-6deg] rounded-[2px] border border-accent bg-paper px-2 py-0.5 dark:bg-night-element">
+                <View
+                  className={`absolute -top-3 left-[-8px] rotate-[-6deg] rounded-[2px] border border-accent px-2 py-0.5 ${
+                    inverted ? 'bg-night-element' : 'bg-paper dark:bg-night-element'
+                  }`}
+                >
                   <Text
                     style={{ fontFamily: Fonts.mono, letterSpacing: 1 }}
                     className="text-[10px] font-bold uppercase text-accent"
@@ -83,18 +91,30 @@ export function RedThreadTimeline({
                 <View className="gap-0.5">
                   <Text
                     style={{ fontFamily: Fonts.mono, letterSpacing: 0.8 }}
-                    className="text-sm font-bold uppercase text-ink dark:text-paper-dark"
+                    className={`text-sm font-bold uppercase ${
+                      inverted ? 'text-paper-dark' : 'text-ink dark:text-paper-dark'
+                    }`}
                   >
                     {sessionDay(session.starts_at)}
                   </Text>
-                  <Text style={{ fontFamily: Fonts.mono }} className="text-xs text-ink dark:text-paper-dark">
+                  <Text
+                    style={{ fontFamily: Fonts.mono }}
+                    className={`text-xs ${
+                      inverted ? 'text-paper-dark' : 'text-ink dark:text-paper-dark'
+                    }`}
+                  >
                     {sessionTime(session.starts_at, session.ends_at)}
                   </Text>
                   <Text style={{ fontFamily: Fonts.mono }} className="text-[11px] text-[#6B6560] dark:text-[#A39D93]">
                     {seatsLeft == null ? 'Без лимита мест' : `Осталось ${seatsLeft} мест`}
                   </Text>
                 </View>
-                <Text style={{ fontFamily: Fonts.mono }} className="text-3xl font-light text-ink dark:text-paper-dark">
+                <Text
+                  style={{ fontFamily: Fonts.mono }}
+                  className={`text-3xl font-light ${
+                    inverted ? 'text-paper-dark' : 'text-ink dark:text-paper-dark'
+                  }`}
+                >
                   ›
                 </Text>
               </View>

@@ -47,10 +47,10 @@ export function CityContextBar({ inverted = false }: { inverted?: boolean }) {
 
       <Modal transparent animationType="slide" visible={open} onRequestClose={() => setOpen(false)}>
         <Pressable className="flex-1 justify-end bg-black/60" onPress={() => setOpen(false)}>
-          <Pressable accessibilityViewIsModal className="border-t-2 border-accent bg-paper px-[18px] pb-10 pt-5 dark:bg-night" onPress={(event) => event.stopPropagation()}>
+          <Pressable accessibilityViewIsModal className={`border-t-2 border-accent px-[18px] pb-10 pt-5 ${inverted ? 'bg-night' : 'bg-paper dark:bg-night'}`} onPress={(event) => event.stopPropagation()}>
             <View className="mb-5 flex-row items-start justify-between">
               <View className="flex-1 pr-4">
-                <Text style={{ fontFamily: Fonts.mono, letterSpacing: 2 }} className="text-lg font-bold uppercase text-ink dark:text-paper-dark">Город событий</Text>
+                <Text style={{ fontFamily: Fonts.mono, letterSpacing: 2 }} className={`text-lg font-bold uppercase ${inverted ? 'text-paper-dark' : 'text-ink dark:text-paper-dark'}`}>Город событий</Text>
                 <Text style={{ fontFamily: Fonts.sans }} className="mt-1 text-sm text-[#6B6560] dark:text-[#A39D93]">Карта и афиша обновятся вместе.</Text>
               </View>
               <Pressable accessibilityRole="button" accessibilityLabel="Закрыть" onPress={() => setOpen(false)} className="h-10 w-10 items-end">
@@ -66,9 +66,9 @@ export function CityContextBar({ inverted = false }: { inverted?: boolean }) {
                     accessibilityRole="radio"
                     accessibilityState={{ checked: active }}
                     onPress={() => selectCity(city)}
-                    className="min-h-14 flex-row items-center justify-between border-b border-ink px-1 active:bg-[#FCE8E5] dark:border-paper-dark"
+                    className={`min-h-14 flex-row items-center justify-between border-b px-1 active:bg-[#2A2420] ${inverted ? 'border-[#4A443D]' : 'border-ink dark:border-paper-dark'}`}
                   >
-                    <Text style={{ fontFamily: Fonts.mono }} className={`text-base font-bold uppercase ${active ? 'text-accent' : 'text-ink dark:text-paper-dark'}`}>{city.name}</Text>
+                    <Text style={{ fontFamily: Fonts.mono }} className={`text-base font-bold uppercase ${active ? 'text-accent' : inverted ? 'text-paper-dark' : 'text-ink dark:text-paper-dark'}`}>{city.name}</Text>
                     <View className={`h-4 w-4 items-center justify-center rounded-full border ${active ? 'border-accent' : 'border-[#8A847C]'}`}>
                       {active ? <View className="h-2 w-2 rounded-full bg-accent" /> : null}
                     </View>

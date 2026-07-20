@@ -10,7 +10,7 @@ export type EventFilters = {
   /** ISO-дата (YYYY-MM-DD); null = любая дата */
   date: string | null;
   types: EventType[];
-  directionId: string | null;
+  directionIds: string[];
   choreographerId: string | null;
   freeOnly: boolean;
 };
@@ -34,7 +34,7 @@ export const useFilters = create<FiltersState>((set) => ({
   cityPickerOpen: false,
   date: null,
   types: ['masterclass'],
-  directionId: null,
+  directionIds: [],
   choreographerId: null,
   freeOnly: false,
   setCityPickerOpen: (cityPickerOpen) => set({ cityPickerOpen }),

@@ -1,13 +1,13 @@
 import { Redirect } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { ActivityIndicator, Platform, View } from 'react-native';
+import { ActivityIndicator, View } from 'react-native';
 
 import { useSession } from '@/features/auth/use-session';
 import { getEntryDone, getOnboardingDone } from '@/features/onboarding/use-onboarding';
 import { palette } from '@/theme';
 
 /**
- * Входная точка: Welcome (первый запуск) → опросник (после логина) → карта.
+ * Входная точка: Welcome (первый запуск) → опросник (после логина) → лента.
  * Гость попадает сразу на карту после «Продолжить без входа».
  */
 export default function Index() {
@@ -30,5 +30,5 @@ export default function Index() {
 
   if (session && !flags.onboarding) return <Redirect href="/(onboarding)/step1" />;
   if (!session && !flags.entry) return <Redirect href="/(auth)/welcome" />;
-  return <Redirect href={Platform.OS === 'web' ? '/(tabs)/list' : '/(tabs)/map'} />;
+  return <Redirect href={session ? '/(tabs)/list' : '/(tabs)/map'} />;
 }

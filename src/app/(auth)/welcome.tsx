@@ -1,5 +1,5 @@
 import { useRouter } from 'expo-router';
-import { Platform, Text, View } from 'react-native';
+import { Platform, Pressable, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Button } from '@/components/ui/button';
@@ -53,6 +53,18 @@ export default function WelcomeScreen() {
             onPress={() => router.push('/(auth)/email')}
           />
           <Button label="Продолжить без входа" variant="ghost" onPress={continueAsGuest} />
+          <View className="flex-row justify-center gap-4">
+            <Pressable accessibilityRole="link" onPress={() => router.push('/privacy')}>
+              <Text style={{ fontFamily: Fonts.mono }} className="text-[10px] uppercase text-[#6B6560] dark:text-[#A39D93]">
+                Конфиденциальность
+              </Text>
+            </Pressable>
+            <Pressable accessibilityRole="link" onPress={() => router.push('/terms')}>
+              <Text style={{ fontFamily: Fonts.mono }} className="text-[10px] uppercase text-[#6B6560] dark:text-[#A39D93]">
+                Условия beta
+              </Text>
+            </Pressable>
+          </View>
         </View>
       </View>
     </SafeAreaView>
