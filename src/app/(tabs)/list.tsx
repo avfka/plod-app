@@ -1,13 +1,31 @@
 import { useRouter } from 'expo-router';
-import { useState } from 'react';
-import { ActivityIndicator, FlatList, Text, useWindowDimensions, View } from 'react-native';
+import { useCallback, useMemo, useRef, useState } from 'react';
+import {
+  ActivityIndicator,
+  FlatList,
+  Text,
+  type ViewToken,
+  useWindowDimensions,
+  View,
+} from 'react-native';
 
 import { Button } from '@/components/ui/button';
 import { MasterclassFeedItem } from '@/features/events/masterclass-feed';
 import { applyEventFilters, useActiveEvents } from '@/features/events/use-events';
+import { hydrateOnboardingDraft } from '@/features/onboarding/use-onboarding';
 import { useProfile } from '@/features/profile/use-profile';
+import {
+  rankEventsForUser,
+  type RecommendedEvent,
+} from '@/features/recommendations/recommendation-engine';
+import {
+  useRecommendationMemory,
+  useRecordRecommendationSignal,
+} from '@/features/recommendations/use-recommendations';
 import { useFilters } from '@/store/filters';
 import { Fonts, palette } from '@/theme';
+
+const VIEWABILITY_CONFIG = { itemVisiblePercentThreshold: 65, minimumViewTime: 700 };
 
 export default function FeedScreen() {
   const router = useRouter();
@@ -15,9 +33,35 @@ export default function FeedScreen() {
   const [feedHeight, setFeedHeight] = useState(Math.max(560, windowHeight - 72));
   const { data: events, isPending, error, refetch, isRefetching } = useActiveEvents();
   const { data: profile } = useProfile();
+  const { data: learnedMemory } = useRecommendationMemory();
+  const { mutate: recordSignal } = useRecordRecommendationSignal();
   const filters = useFilters();
-  const filtered = applyEventFilters(events ?? [], filters, profile?.favorite_choreographer_id)
-    .filter((event) => event.event_type === 'masterclass');
+  const ranked = useMemo(() => {
+    const filtered = applyEventFilters(events ?? [], {
+      ...filters,
+      types: ['masterclass'],
+    });
+    return rankEventsForUser(filtered, {
+      behavior: learnedMemory?.behavior ?? [],
+      directionIds: learnedMemory?.directionIds ?? [],
+      favoriteChoreographerId: profile?.favorite_choreographer_id ?? null,
+      followedChoreographerNames: learnedMemory?.followedChoreographerNames ?? [],
+      interestedInMasterclasses: profile?.interested_in_mc ?? true,
+      preferredCityId: profile?.city_id ?? filters.cityId,
+    });
+  }, [events, filters, learnedMemory, profile]);
+  const recordedViews = useRef(new Set<string>());
+  const onViewableItemsChanged = useCallback(
+    ({ viewableItems }: { viewableItems: ViewToken<RecommendedEvent>[] }) => {
+      for (const item of viewableItems) {
+        const eventId = item.item?.event.id;
+        if (!item.isViewable || !eventId || recordedViews.current.has(eventId)) continue;
+        recordedViews.current.add(eventId);
+        recordSignal({ eventId, signalType: 'view' });
+      }
+    },
+    [recordSignal],
+  );
 
   if (isPending) {
     return (
@@ -41,7 +85,7 @@ export default function FeedScreen() {
     );
   }
 
-  if (filtered.length === 0) {
+  if (ranked.length === 0) {
     return (
       <View className="flex-1 items-center justify-center gap-4 bg-night px-8">
         <Text style={{ fontFamily: Fonts.serif }} className="text-center text-3xl font-bold text-paper-dark">
@@ -61,9 +105,29 @@ export default function FeedScreen() {
       onLayout={(event) => setFeedHeight(event.nativeEvent.layout.height)}
     >
       <FlatList
-        data={filtered}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => <MasterclassFeedItem event={item} height={feedHeight} />}
+        data={ranked}
+        keyExtractor={(item) => item.event.id}
+        renderItem={({ item }) => (
+          <MasterclassFeedItem
+            event={item.event}
+            height={feedHeight}
+            recommendationReasons={item.reasons}
+            onMapOpen={() =>
+              recordSignal({ eventId: item.event.id, signalType: 'map_open' })
+            }
+            onOpen={() => recordSignal({ eventId: item.event.id, signalType: 'open' })}
+            onTune={() => {
+              hydrateOnboardingDraft({
+                directionIds: learnedMemory?.directionIds ?? [],
+                favoriteChoreographerId: profile?.favorite_choreographer_id ?? null,
+                interestedInChamp: profile?.interested_in_champ ?? false,
+                interestedInMc: profile?.interested_in_mc ?? true,
+                preferredDate: profile?.preferred_date ?? null,
+              });
+              router.push('/(onboarding)/step1');
+            }}
+          />
+        )}
         pagingEnabled
         snapToInterval={feedHeight}
         snapToAlignment="start"
@@ -72,6 +136,8 @@ export default function FeedScreen() {
         refreshing={isRefetching}
         onRefresh={refetch}
         getItemLayout={(_, index) => ({ length: feedHeight, offset: feedHeight * index, index })}
+        onViewableItemsChanged={onViewableItemsChanged}
+        viewabilityConfig={VIEWABILITY_CONFIG}
       />
     </View>
   );

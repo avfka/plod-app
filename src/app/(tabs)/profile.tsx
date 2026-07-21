@@ -1,12 +1,18 @@
 import { useRouter } from 'expo-router';
-import { Pressable, ScrollView, Text, View } from 'react-native';
+import { Alert, Pressable, ScrollView, Text, View } from 'react-native';
 
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { DossierRow, Tag } from '@/components/ui/tag';
 import { useSession } from '@/features/auth/use-session';
 import { reportProblem } from '@/features/feedback/report-problem';
+import { useDanceDirections } from '@/features/onboarding/use-directories';
+import { hydrateOnboardingDraft } from '@/features/onboarding/use-onboarding';
 import { useProfile, useUpdateProfile } from '@/features/profile/use-profile';
+import {
+  useClearRecommendationHistory,
+  useRecommendationMemory,
+} from '@/features/recommendations/use-recommendations';
 import { supabase } from '@/lib/supabase';
 import { cardColorPalette, Fonts } from '@/theme';
 import type { Database } from '@/types/database';
@@ -61,6 +67,22 @@ export default function ProfileScreen() {
   const { session, isGuest } = useSession();
   const { data: profile } = useProfile();
   const updateProfile = useUpdateProfile();
+  const { data: directions = [] } = useDanceDirections();
+  const { data: recommendationMemory } = useRecommendationMemory();
+  const clearRecommendationHistory = useClearRecommendationHistory();
+  const selectedDirectionNames = directions
+    .filter((direction) => recommendationMemory?.directionIds.includes(direction.id))
+    .map((direction) => direction.name);
+  const openFeedPreferences = () => {
+    hydrateOnboardingDraft({
+      directionIds: recommendationMemory?.directionIds ?? [],
+      favoriteChoreographerId: profile?.favorite_choreographer_id ?? null,
+      interestedInChamp: profile?.interested_in_champ ?? false,
+      interestedInMc: profile?.interested_in_mc ?? true,
+      preferredDate: profile?.preferred_date ?? null,
+    });
+    router.push('/(onboarding)/step1');
+  };
 
   if (isGuest) {
     return (
@@ -97,6 +119,49 @@ export default function ProfileScreen() {
           <DossierRow inverted label="Город" value={profile?.city ?? 'Не указан'} />
           <DossierRow inverted label="Статус" value={profile ? ROLE_LABELS[profile.role] : 'Не указан'} />
         </View>
+      </Card>
+
+      <Card inverted className="gap-3">
+        <Tag label="Память ленты" color="#141210" />
+        <Text style={{ fontFamily: Fonts.sans }} className="text-sm leading-5 text-[#A39D93]">
+          Сначала лента опирается на ответы при регистрации, затем учитывает открытия, карту,
+          подписки и записи. На карточке всегда показана причина рекомендации.
+        </Text>
+        <DossierRow
+          inverted
+          label="Направления"
+          value={selectedDirectionNames.length > 0 ? selectedDirectionNames.join(', ') : 'Ещё не выбраны'}
+        />
+        <DossierRow
+          inverted
+          label="История"
+          value={`${recommendationMemory?.behavior.filter((item) => item.signalType !== 'booking').length ?? 0} сигналов`}
+        />
+        <Button
+          inverted
+          label="Изменить интересы"
+          onPress={openFeedPreferences}
+        />
+        <Button
+          inverted
+          label="Очистить историю интересов"
+          variant="ghost"
+          loading={clearRecommendationHistory.isPending}
+          onPress={() =>
+            Alert.alert(
+              'Очистить историю?',
+              'Ответы регистрации и подписки останутся. Удалятся только сигналы просмотров, открытий и карты.',
+              [
+                { text: 'Отмена', style: 'cancel' },
+                {
+                  text: 'Очистить',
+                  style: 'destructive',
+                  onPress: () => clearRecommendationHistory.mutate(),
+                },
+              ],
+            )
+          }
+        />
       </Card>
 
       <Card inverted>
@@ -160,12 +225,6 @@ export default function ProfileScreen() {
         <Button inverted label="Мои записи" onPress={() => router.push('/(tabs)/bookings')} />
       </Card>
 
-      <Button
-        inverted
-        label="Настроить ленту заново"
-        variant="outline"
-        onPress={() => router.push('/(onboarding)/step1')}
-      />
       <Card inverted className="gap-2">
         <Tag label="Beta · помощь" />
         <Text style={{ fontFamily: Fonts.mono }} className="text-xs leading-5 text-[#A39D93]">

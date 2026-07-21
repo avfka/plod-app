@@ -57,6 +57,7 @@ export function useBookingActions(eventId: string) {
       client.invalidateQueries({ queryKey: ['booking', eventId] }),
       client.invalidateQueries({ queryKey: ['bookings'] }),
       client.invalidateQueries({ queryKey: ['events'] }),
+      client.invalidateQueries({ queryKey: ['recommendation-memory'] }),
     ]);
   };
 

@@ -1,6 +1,6 @@
 import { Image } from 'expo-image';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ActivityIndicator, Alert, Pressable, ScrollView, Text, View } from 'react-native';
 
 import { Button } from '@/components/ui/button';
@@ -12,6 +12,7 @@ import { reportProblem } from '@/features/feedback/report-problem';
 import { bookingDate, RedThreadTimeline } from '@/features/events/red-thread-timeline';
 import { useEvent } from '@/features/events/use-events';
 import { useProfile } from '@/features/profile/use-profile';
+import { useRecordRecommendationSignal } from '@/features/recommendations/use-recommendations';
 import { useNow } from '@/hooks/use-now';
 import { Fonts, palette } from '@/theme';
 
@@ -23,8 +24,13 @@ export default function EventScreen() {
   const { data: event, isPending, error } = useEvent(id);
   const { data: booking } = useEventBooking(id, !isGuest);
   const { book, cancel, bookingError } = useBookingActions(id ?? '');
+  const { mutate: recordSignal } = useRecordRecommendationSignal();
   const [selectedSessionId, setSelectedSessionId] = useState<string | undefined>(sessionId);
   const now = useNow();
+
+  useEffect(() => {
+    if (id && !isGuest) recordSignal({ eventId: id, signalType: 'open' });
+  }, [id, isGuest, recordSignal]);
 
   if (isPending) {
     return (

@@ -1,6 +1,6 @@
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
-import { Platform, Pressable, Text, TextInput, View } from 'react-native';
+import { Pressable, Text, TextInput, View } from 'react-native';
 
 import { Button } from '@/components/ui/button';
 import { Tag } from '@/components/ui/tag';
@@ -27,9 +27,10 @@ export default function Step3Choreographer() {
         preferredDate: draft.preferredDate,
         interestedInMc: draft.interestedInMc,
         interestedInChamp: draft.interestedInChamp,
+        directionIds: draft.directionIds,
         ...patch,
       });
-      router.replace(Platform.OS === 'web' ? '/(tabs)/list' : '/(tabs)/map');
+      router.replace('/(tabs)/list');
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Не удалось сохранить');
       setSaving(false);
@@ -110,7 +111,10 @@ export default function Step3Choreographer() {
           variant="ghost"
           loading={saving}
           onPress={() =>
-            finish({ favoriteChoreographerId: null, subscribeChoreographerName: null })
+            finish({
+              favoriteChoreographerId: draft.favoriteChoreographerId,
+              subscribeChoreographerName: null,
+            })
           }
         />
       </View>

@@ -49,9 +49,17 @@ function RailAction({
 export function MasterclassFeedItem({
   event,
   height,
+  recommendationReasons,
+  onMapOpen,
+  onOpen,
+  onTune,
 }: {
   event: EventWithRelations;
   height: number;
+  recommendationReasons: string[];
+  onMapOpen: () => void;
+  onOpen: () => void;
+  onTune: () => void;
 }) {
   const router = useRouter();
   const session = firstSession(event);
@@ -59,8 +67,14 @@ export function MasterclassFeedItem({
   const seatsLeft = event.seats_total == null ? null : event.seats_total - event.seats_taken;
 
   const showOnMap = () => {
+    onMapOpen();
     useFilters.getState().set({ choreographerId: event.choreographer_id });
     router.push('/(tabs)/map');
+  };
+
+  const openEvent = () => {
+    onOpen();
+    router.push({ pathname: '/event/[id]', params: { id: event.id } });
   };
 
   return (
@@ -82,15 +96,31 @@ export function MasterclassFeedItem({
         >
           PLOD
         </Text>
-        <View className="flex-row items-center gap-2 rounded-full bg-black/40 px-3 py-2">
-          <View className="h-1.5 w-1.5 rounded-full bg-accent" />
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="Настроить персональную ленту"
+          onPress={onTune}
+          className="flex-row items-center gap-2 rounded-full bg-black/55 px-3 py-2 active:opacity-75"
+        >
+          <Ionicons name="sparkles" size={14} color="#E8352A" />
           <Text style={{ fontFamily: Fonts.sans }} className="text-xs font-semibold text-paper-dark">
-            Мастер-классы
+            Для вас
           </Text>
-        </View>
+          <Ionicons name="options-outline" size={14} color="#F5F1E8" />
+        </Pressable>
       </View>
 
       <View className="absolute bottom-5 left-4 right-[78px] gap-3">
+        <View className="self-start flex-row items-center gap-1.5 rounded-full bg-black/55 px-3 py-1.5">
+          <Ionicons name="sparkles" size={13} color="#E8352A" />
+          <Text
+            numberOfLines={1}
+            style={{ fontFamily: Fonts.sans }}
+            className="max-w-[240px] text-xs font-semibold text-paper-dark"
+          >
+            {recommendationReasons[0]}
+          </Text>
+        </View>
         <View className="flex-row flex-wrap items-center gap-2">
           {event.direction ? (
             <View
@@ -156,7 +186,7 @@ export function MasterclassFeedItem({
 
         <Pressable
           accessibilityRole="button"
-          onPress={() => router.push({ pathname: '/event/[id]', params: { id: event.id } })}
+          onPress={openEvent}
           className="mt-1 flex-row items-center justify-between rounded-full bg-paper-dark px-5 py-3.5 active:opacity-80"
         >
           <Text style={{ fontFamily: Fonts.sans }} className="text-sm font-bold text-ink">
@@ -186,7 +216,7 @@ export function MasterclassFeedItem({
         <RailAction
           icon="information-circle-outline"
           label="Подробнее"
-          onPress={() => router.push({ pathname: '/event/[id]', params: { id: event.id } })}
+          onPress={openEvent}
         />
       </View>
     </View>

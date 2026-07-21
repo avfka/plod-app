@@ -24,6 +24,7 @@ type OnboardingDraft = {
   preferredDate: string | null; // YYYY-MM-DD, null = любая
   interestedInMc: boolean;
   interestedInChamp: boolean;
+  directionIds: string[];
   favoriteChoreographerId: string | null;
   /** Имя для подписки, если хореограф не найден в справочнике. */
   subscribeChoreographerName: string | null;
@@ -34,16 +35,31 @@ export const useOnboardingDraft = create<OnboardingDraft>((set) => ({
   preferredDate: null,
   interestedInMc: true,
   interestedInChamp: false,
+  directionIds: [],
   favoriteChoreographerId: null,
   subscribeChoreographerName: null,
   set: (patch) => set(patch),
 }));
+
+export function hydrateOnboardingDraft(input: {
+  directionIds: string[];
+  favoriteChoreographerId: string | null;
+  interestedInChamp: boolean;
+  interestedInMc: boolean;
+  preferredDate: string | null;
+}) {
+  useOnboardingDraft.getState().set({
+    ...input,
+    subscribeChoreographerName: null,
+  });
+}
 
 /** Сохранение ответов: profiles + (опц.) подписка на будущего хореографа. */
 export async function saveOnboarding(draft: {
   preferredDate: string | null;
   interestedInMc: boolean;
   interestedInChamp: boolean;
+  directionIds: string[];
   favoriteChoreographerId: string | null;
   subscribeChoreographerName: string | null;
 }) {
@@ -61,6 +77,22 @@ export async function saveOnboarding(draft: {
     })
     .eq('id', userId);
   if (error) throw error;
+
+  const { error: deleteDirectionsError } = await supabase
+    .from('profile_directions')
+    .delete()
+    .eq('profile_id', userId);
+  if (deleteDirectionsError) throw deleteDirectionsError;
+
+  if (draft.directionIds.length > 0) {
+    const { error: directionsError } = await supabase.from('profile_directions').insert(
+      draft.directionIds.map((directionId) => ({
+        direction_id: directionId,
+        profile_id: userId,
+      })),
+    );
+    if (directionsError) throw directionsError;
+  }
 
   if (draft.subscribeChoreographerName) {
     // не найден в справочнике — подписка «сообщить, когда появится»
