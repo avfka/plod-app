@@ -1,13 +1,7 @@
 import { useRouter } from 'expo-router';
-import { useCallback, useMemo, useRef, useState } from 'react';
-import {
-  ActivityIndicator,
-  FlatList,
-  Text,
-  type ViewToken,
-  useWindowDimensions,
-  View,
-} from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { useCallback, useMemo, useRef } from 'react';
+import { ActivityIndicator, FlatList, Pressable, Text, type ViewToken, View } from 'react-native';
 
 import { Button } from '@/components/ui/button';
 import { MasterclassFeedItem } from '@/features/events/masterclass-feed';
@@ -25,12 +19,10 @@ import {
 import { useFilters } from '@/store/filters';
 import { Fonts, palette } from '@/theme';
 
-const VIEWABILITY_CONFIG = { itemVisiblePercentThreshold: 65, minimumViewTime: 700 };
+const VIEWABILITY_CONFIG = { itemVisiblePercentThreshold: 55, minimumViewTime: 700 };
 
 export default function FeedScreen() {
   const router = useRouter();
-  const { height: windowHeight } = useWindowDimensions();
-  const [feedHeight, setFeedHeight] = useState(Math.max(560, windowHeight - 72));
   const { data: events, isPending, error, refetch, isRefetching } = useActiveEvents();
   const { data: profile } = useProfile();
   const { data: learnedMemory } = useRecommendationMemory();
@@ -100,42 +92,85 @@ export default function FeedScreen() {
   }
 
   return (
-    <View
-      className="flex-1 bg-night"
-      onLayout={(event) => setFeedHeight(event.nativeEvent.layout.height)}
-    >
+    <View className="flex-1 bg-[#172813]">
       <FlatList
         data={ranked}
         keyExtractor={(item) => item.event.id}
-        renderItem={({ item }) => (
+        renderItem={({ item, index }) => (
           <MasterclassFeedItem
             event={item.event}
-            height={feedHeight}
+            index={index}
             recommendationReasons={item.reasons}
             onMapOpen={() =>
               recordSignal({ eventId: item.event.id, signalType: 'map_open' })
             }
             onOpen={() => recordSignal({ eventId: item.event.id, signalType: 'open' })}
-            onTune={() => {
-              hydrateOnboardingDraft({
-                directionIds: learnedMemory?.directionIds ?? [],
-                favoriteChoreographerId: profile?.favorite_choreographer_id ?? null,
-                interestedInChamp: profile?.interested_in_champ ?? false,
-                interestedInMc: profile?.interested_in_mc ?? true,
-                preferredDate: profile?.preferred_date ?? null,
-              });
-              router.push('/(onboarding)/step1');
-            }}
           />
         )}
-        pagingEnabled
-        snapToInterval={feedHeight}
-        snapToAlignment="start"
-        decelerationRate="fast"
+        ListHeaderComponent={
+          <View className="gap-8 pb-10 pt-5">
+            <View className="flex-row items-center justify-between">
+              <Text
+                style={{ fontFamily: Fonts.mono, letterSpacing: 3 }}
+                className="text-lg font-black text-[#F3F0E7]"
+              >
+                PLOD
+              </Text>
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel="Настроить персональную ленту"
+                onPress={() => {
+                  hydrateOnboardingDraft({
+                    directionIds: learnedMemory?.directionIds ?? [],
+                    favoriteChoreographerId: profile?.favorite_choreographer_id ?? null,
+                    interestedInChamp: profile?.interested_in_champ ?? false,
+                    interestedInMc: profile?.interested_in_mc ?? true,
+                    preferredDate: profile?.preferred_date ?? null,
+                  });
+                  router.push('/(onboarding)/step1');
+                }}
+                className="min-h-11 flex-row items-center gap-2 border-b border-[#6D7B63] px-1 active:opacity-60"
+              >
+                <Ionicons name="sparkles" size={13} color="#E8352A" />
+                <Text
+                  style={{ fontFamily: Fonts.mono, letterSpacing: 1 }}
+                  className="text-[10px] font-bold uppercase text-[#F3F0E7]"
+                >
+                  Для вас
+                </Text>
+                <Ionicons name="options-outline" size={14} color="#F3F0E7" />
+              </Pressable>
+            </View>
+            <View className="max-w-[310px] gap-3">
+              <Text
+                style={{ fontFamily: Fonts.serif }}
+                className="text-[38px] font-bold leading-[39px] text-[#F3F0E7]"
+              >
+                Двигайтесь туда, где будет живо
+              </Text>
+              <Text
+                style={{ fontFamily: Fonts.mono, letterSpacing: 0.8 }}
+                className="max-w-[265px] text-[9px] uppercase leading-[14px] text-[#AAB5A1]"
+              >
+                События отобраны по вашему городу, стилям и вниманию
+              </Text>
+            </View>
+          </View>
+        }
+        ListFooterComponent={
+          <View className="items-end pb-10">
+            <Text
+              style={{ fontFamily: Fonts.mono, letterSpacing: 1.5 }}
+              className="text-[9px] uppercase text-[#AAB5A1]"
+            >
+              Продолжайте двигаться / PLOD
+            </Text>
+          </View>
+        }
+        contentContainerStyle={{ paddingBottom: 18, paddingHorizontal: 16 }}
         showsVerticalScrollIndicator={false}
         refreshing={isRefetching}
         onRefresh={refetch}
-        getItemLayout={(_, index) => ({ length: feedHeight, offset: feedHeight * index, index })}
         onViewableItemsChanged={onViewableItemsChanged}
         viewabilityConfig={VIEWABILITY_CONFIG}
       />
