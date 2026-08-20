@@ -31,6 +31,21 @@ function profileDescription(name: string, events: EventWithRelations[]) {
   return `${name} работает с направлениями ${directions.join(', ')}. В профиле собраны ближайшие мастер-классы, интенсивы и архив прошедших событий.`;
 }
 
+function formatFollowers(count: number) {
+  const value = Math.max(0, count);
+  const mod100 = value % 100;
+  const mod10 = value % 10;
+  const noun =
+    mod100 >= 11 && mod100 <= 14
+      ? 'подписчиков'
+      : mod10 === 1
+        ? 'подписчик'
+        : mod10 >= 2 && mod10 <= 4
+          ? 'подписчика'
+          : 'подписчиков';
+  return `${value.toLocaleString('ru-RU')} ${noun}`;
+}
+
 export default function ChoreographerScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { data: choreographer, isPending: choreographerPending, error } = useChoreographer(id);
@@ -84,6 +99,13 @@ export default function ChoreographerScreen() {
               <Text style={{ fontFamily: Fonts.sans }} className="text-xs font-semibold text-[#D8D2C6]">
                 {choreographer.is_verified ? 'Профиль подтверждён · ' : ''}
                 {upcoming.length} актуальных классов
+              </Text>
+              <Text
+                accessibilityLabel={formatFollowers(choreographer.follower_count ?? 0)}
+                style={{ fontFamily: Fonts.mono, letterSpacing: 0.6 }}
+                className="text-[11px] font-bold uppercase text-paper-dark"
+              >
+                {formatFollowers(choreographer.follower_count ?? 0)}
               </Text>
             </View>
           </View>

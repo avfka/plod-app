@@ -140,6 +140,7 @@ export type Database = {
       choreographers: {
         Row: {
           created_at: string
+          follower_count: number
           id: string
           is_verified: boolean
           name: string
@@ -147,6 +148,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          follower_count?: number
           id?: string
           is_verified?: boolean
           name: string
@@ -154,6 +156,7 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          follower_count?: number
           id?: string
           is_verified?: boolean
           name?: string

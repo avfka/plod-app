@@ -1,10 +1,19 @@
 -- Танц-Карта: справочник направлений с цветами маркеров (спек §4.2)
 
-insert into dance_directions (name, slug, color_hex, sort_order) values
-  ('Хип-хоп',  'hiphop',  '#45B7D1', 1),
-  ('Контемп',  'contemp', '#96CEB4', 2),
-  ('Бачата',   'bachata', '#FF6B6B', 3),
-  ('Кизомба',  'kizomba', '#6C63FF', 4),
-  ('Сальса',   'salsa',   '#FFA94D', 5),
-  ('Другое',   'other',   '#ADB5BD', 6)
-on conflict (slug) do nothing;
+insert into dance_directions (name, slug, color_hex, is_active, sort_order) values
+  ('Hip-Hop',    'hiphop',     '#36B7D7', true, 1),
+  ('High Heels', 'high-heels', '#F05A7E', true, 2),
+  ('Contemp',    'contemp',    '#84C7AD', true, 3),
+  ('Krump',      'krump',      '#F04A32', true, 4),
+  ('Frame Up',   'frame-up',   '#9B6DFF', true, 5),
+  ('Vogue',      'vogue',      '#F1C453', true, 6),
+  ('Pole Dance', 'pole-dance', '#3F7BEA', true, 7),
+  ('Other',      'other',      '#A8ADA6', true, 8),
+  ('Бачата',     'bachata',    '#FF6B6B', false, 91),
+  ('Кизомба',    'kizomba',    '#6C63FF', false, 92),
+  ('Сальса',     'salsa',      '#FFA94D', false, 93)
+on conflict (slug) do update
+set name = excluded.name,
+    color_hex = excluded.color_hex,
+    is_active = excluded.is_active,
+    sort_order = excluded.sort_order;

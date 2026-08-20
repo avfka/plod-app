@@ -33,6 +33,7 @@ function event(
     title: id,
     choreographer: {
       created_at: '2026-07-20T00:00:00.000Z',
+      follower_count: 0,
       id: choreographerId,
       is_verified: true,
       name: choreographerName,
@@ -42,7 +43,7 @@ function event(
       color_hex: '#E8352A',
       id: directionId,
       is_active: true,
-      name: directionId === 'hip-hop' ? 'Хип-хоп' : 'Бачата',
+      name: directionId === 'hip-hop' ? 'Hip-Hop' : 'Bachata',
       slug: directionId,
       sort_order: 1,
     },
@@ -83,7 +84,7 @@ describe('personalized feed ranking', () => {
     );
 
     expect(ranked[0].event.id).toBe('hip-hop');
-    expect(ranked[0].reasons).toContain('Ваше направление · Хип-хоп');
+    expect(ranked[0].reasons).toContain('Ваше направление · Hip-Hop');
   });
 
   it('learns from strong behavior across similar events', () => {

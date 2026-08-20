@@ -91,6 +91,7 @@ export function useToggleChoreographerSubscription(userId?: string) {
     },
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ['choreographer-subscriptions', userId] });
+      void queryClient.invalidateQueries({ queryKey: ['choreographers'] });
     },
   });
 }
